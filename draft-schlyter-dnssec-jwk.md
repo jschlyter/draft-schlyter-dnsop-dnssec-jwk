@@ -224,9 +224,9 @@ Long lines are wrapped using the single backslash strategy described in {{RFC879
 
 The owner name of the last example, "b\\000rken.example.com.", has a zero octet in its first label. In DNS presentation format this octet is written "\\000", and because the backslash is escaped again in JSON, it appears as "b\\\\000rken" in the serialized JWK.
 
-## RSASHA256
+## RSA/SHA-256
 
-The following private key uses RSASHA256 (algorithm 8), with owner name "example.com." and key tag 49458:
+The following private key uses RSA/SHA-256 (algorithm 8, mnemonic RSASHA256), with owner name "example.com." and key tag 49458:
 
 ~~~ json
 =============== NOTE: '\' line wrapping per RFC 8792 ================
@@ -271,7 +271,7 @@ dRpMqYTKKgFksBsQRb2hNXkUxrHrNx5FzsUpzDk7F4RqfXjS-lT4ASO1BTeDdr_FVoLM\
   }
 }
 ~~~
-{: title="RSASHA256 Private Key"}
+{: title="RSA/SHA-256 Private Key"}
 
 The corresponding DNSKEY resource record is:
 
@@ -285,11 +285,11 @@ example.com. IN DNSKEY 256 3 8 (
     h9rUOOSastJZnRd3SJkFIqV7MHOdUTNPXBmXvIt5x9hqozPtRs3xbQHW
     dzOaZWwn53c= )
 ~~~
-{: title="RSASHA256 DNSKEY Resource Record"}
+{: title="RSA/SHA-256 DNSKEY Resource Record"}
 
-## ECDSAP256SHA256 {#example-ecdsap256sha256}
+## ECDSA Curve P-256 with SHA-256 {#example-ecdsap256sha256}
 
-The following private key uses ECDSAP256SHA256 (algorithm 13), with owner name "example.com." and key tag 9115:
+The following private key uses ECDSA Curve P-256 with SHA-256 (algorithm 13, mnemonic ECDSAP256SHA256), with owner name "example.com." and key tag 9115:
 
 ~~~ json
 {
@@ -308,7 +308,7 @@ The following private key uses ECDSAP256SHA256 (algorithm 13), with owner name "
   }
 }
 ~~~
-{: title="ECDSAP256SHA256 Private Key"}
+{: title="ECDSA Curve P-256 with SHA-256 Private Key"}
 
 The corresponding DNSKEY resource record is:
 
@@ -317,11 +317,11 @@ example.com. IN DNSKEY 256 3 13 (
     9cqheie08FXlvnU17YJJm1FMUXD4rwi7+4atSdZ3og89HrrGRArhgq6Z
     p8Ffi1hXg3TTxF9kdBl0zGz/tOgrkA== )
 ~~~
-{: title="ECDSAP256SHA256 DNSKEY Resource Record"}
+{: title="ECDSA Curve P-256 with SHA-256 DNSKEY Resource Record"}
 
-## ED25519
+## Ed25519
 
-The following private key uses ED25519 (algorithm 15), with owner name "example.com." and key tag 63713:
+The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with owner name "example.com." and key tag 63713:
 
 ~~~ json
 {
@@ -339,7 +339,7 @@ The following private key uses ED25519 (algorithm 15), with owner name "example.
   }
 }
 ~~~
-{: title="ED25519 Private Key"}
+{: title="Ed25519 Private Key"}
 
 The corresponding DNSKEY resource record is:
 
@@ -347,11 +347,11 @@ The corresponding DNSKEY resource record is:
 example.com. IN DNSKEY 256 3 15 (
     xX2gT6qJ76coFM3/pAUBxfBZYGnfSZqbNvbZFI428Ao= )
 ~~~
-{: title="ED25519 DNSKEY Resource Record"}
+{: title="Ed25519 DNSKEY Resource Record"}
 
 ## ML-DSA-44
 
-The following private key uses ML-DSA-44 (algorithm 18), with owner name "example.com." and key tag 59828:
+The following private key uses ML-DSA-44 (algorithm 18, mnemonic MLDSA44), with owner name "example.com." and key tag 59828:
 
 ~~~ json
 =============== NOTE: '\' line wrapping per RFC 8792 ================
@@ -439,7 +439,7 @@ example.com. IN DNSKEY 256 3 18 (
 
 ## ED25519 with Escaped Owner Name
 
-The following private key uses ED25519 (algorithm 15), with owner name "b\\000rken.example.com." and key tag 17078:
+The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with owner name "b\\000rken.example.com." and key tag 17078:
 
 ~~~ json
 {
