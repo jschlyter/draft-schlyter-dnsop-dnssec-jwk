@@ -1,7 +1,7 @@
 ---
 title: JSON Web Key (JWK) for DNSSEC
 abbrev: JWK for DNSSEC
-docname: draft-schlyter-dnssec-jwk
+docname: draft-schlyter-dnssec-jwk-latest
 
 stand_alone: true
 v: 3
