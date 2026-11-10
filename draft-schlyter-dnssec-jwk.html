@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>JSON Web Key (JWK) for DNSSEC</title>
+<meta content="Jakob Schlyter" name="author">
+<meta content='
+       This document specifies how to represent DNSSEC public and private keys as JSON Web Keys (JWK). The cryptographic key material is encoded using the existing JWK key types, and the DNS-specific information needed to reconstruct the corresponding DNSKEY resource record (owner name, algorithm, protocol and flags) is carried in a new JWK parameter, "dnskey". This gives DNSSEC signers, key management systems and other tools a standardized, interoperable format for exchanging and storing DNSSEC keys. 
+    ' name="description">
+<meta content="xml2rfc 3.35.0" name="generator">
+<meta content="Internet-Draft" name="keyword">
+<meta content="draft-schlyter-dnssec-jwk-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.35.0
+    Python 3.14.10
+    ConfigArgParse 1.9.0
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.14.3
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.33.1
+    wcwidth 0.9.4
+-->
+<link href="draft-schlyter-dnssec-jwk.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
+}
+svg {
+  display: block;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
+}
+.alignCenter {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+      float: none;
+    }
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
+}
+.iref + a[href].internal {
+  color: var(--text-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
+  }
+  @media print {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+  & .prepared {
+    float: right;
+  }
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
+  }
+}
+
+/* Comments */
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
+      }
+    }
+    & a.toplink {
+      float: right;
+    }
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
+    }
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc {
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill], [fill] *)) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">JWK for DNSSEC</td>
+<td class="right">November 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Schlyter</td>
+<td class="center">Expires 14 May 2027</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Network Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-schlyter-dnssec-jwk-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-11-10" class="published">10 November 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2027-05-14">14 May 2027</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">J. Schlyter</div>
+<div class="org">Kirei AB</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">JSON Web Key (JWK) for DNSSEC</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document specifies how to represent DNSSEC public and private keys as JSON Web Keys (JWK). The cryptographic key material is encoded using the existing JWK key types, and the DNS-specific information needed to reconstruct the corresponding DNSKEY resource record (owner name, algorithm, protocol and flags) is carried in a new JWK parameter, "dnskey". This gives DNSSEC signers, key management systems and other tools a standardized, interoperable format for exchanging and storing DNSSEC keys.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-discussion-venues">
+<a href="#name-discussion-venues" class="section-name selfRef">Discussion Venues</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Discussion of this document takes place on the
+    Domain Name System Security Working Group mailing list (dns-security@lists.tislabs.com),
+    which is archived at <span><a href="ftp://ftp.tis.com/pub/lists/dns-security">ftp://ftp.tis.com/pub/lists/dns-security</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">Source for this draft and an issue tracker can be found at
+    <span><a href="https://github.com/jschlyter/draft-schlyter-dnssec-jwk">https://github.com/jschlyter/draft-schlyter-dnssec-jwk</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 14 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-requirements-language" class="internal xref">Requirements Language</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-dnssec-keys-as-json-web-key" class="internal xref">DNSSEC Keys as JSON Web Key</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-key-material" class="internal xref">Key Material</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-the-dnskey-parameter" class="internal xref">The "dnskey" Parameter</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-key-timing-and-other-metada" class="internal xref">Key Timing and Other Metadata</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
+                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-other-jwk-parameters" class="internal xref">Other JWK Parameters</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.5">
+                <p id="section-toc.1-1.2.2.5.1"><a href="#section-2.5" class="auto internal xref">2.5</a>.  <a href="#name-processing-rules" class="internal xref">Processing Rules</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.6">
+                <p id="section-toc.1-1.2.2.6.1"><a href="#section-2.6" class="auto internal xref">2.6</a>.  <a href="#name-key-sets" class="internal xref">Key Sets</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-examples" class="internal xref">Examples</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-example-keys" class="internal xref">Example Keys</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-rsasha256" class="internal xref">RSASHA256</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-ecdsap256sha256" class="internal xref">ECDSAP256SHA256</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-ed25519" class="internal xref">ED25519</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
+                <p id="section-toc.1-1.7.2.4.1"><a href="#appendix-A.4" class="auto internal xref">A.4</a>.  <a href="#name-ml-dsa-44" class="internal xref">ML-DSA-44</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5">
+                <p id="section-toc.1-1.7.2.5.1"><a href="#appendix-A.5" class="auto internal xref">A.5</a>.  <a href="#name-ed25519-with-escaped-owner-" class="internal xref">ED25519 with Escaped Owner Name</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">DNS Security Extensions (DNSSEC) <span>[<a href="#RFC9364" class="cite xref">RFC9364</a>]</span> use public key cryptography to sign DNS data. The public keys are published in the DNS as DNSKEY resource records <span>[<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>, but there is no standardized format for storing or exchanging the corresponding private keys. In practice, implementations use their own formats, the most widespread being the BIND "Private-key-format" text files, which have never been formally specified. This makes it unnecessarily hard to move keys between signers, key management systems and tooling, for example when changing DNS operator or signer implementation.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">JSON Web Key (JWK) <span>[<a href="#RFC7517" class="cite xref">RFC7517</a>]</span> is a well-established and widely implemented JSON <span>[<a href="#RFC8259" class="cite xref">RFC8259</a>]</span> format for representing cryptographic keys, with defined encodings for RSA, elliptic curve, Edwards-curve and ML-DSA keys <span>[<a href="#RFC7518" class="cite xref">RFC7518</a>]</span> <span>[<a href="#RFC8037" class="cite xref">RFC8037</a>]</span> <span>[<a href="#I-D.ietf-cose-dilithium" class="cite xref">I-D.ietf-cose-dilithium</a>]</span>, covering the signature schemes used by DNSSEC. A JWK alone, however, does not carry the information needed to construct a DNSKEY resource record: the owner name, DNSSEC algorithm number, flags and protocol fields.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document defines a profile of JWK for DNSSEC keys. A DNSSEC key is represented as a plain JWK, with the key material encoded as specified for its JWK key type, and the DNSKEY metadata included in a new JWK parameter named "dnskey". Since the result is a valid JWK, existing JWK libraries can be used to parse and produce such keys, and applications that do not understand the "dnskey" parameter can still use the key material.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<div id="requirements-language">
+<section id="section-1.1">
+        <h3 id="name-requirements-language">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-requirements-language" class="section-name selfRef">Requirements Language</a>
+        </h3>
+<p id="section-1.1-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="terminology">
+<section id="section-1.2">
+        <h3 id="name-terminology">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<p id="section-1.2-1">This document uses DNSSEC terminology as defined in <span>[<a href="#RFC4033" class="cite xref">RFC4033</a>]</span> and <span>[<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>, and JWK terminology as defined in <span>[<a href="#RFC7517" class="cite xref">RFC7517</a>]</span>.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-1.2-2">
+          <dt id="section-1.2-2.1">DNSSEC JWK:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.2">
+            <p id="section-1.2-2.2.1">A JWK that represents a DNSSEC key and contains a "dnskey" parameter as specified in this document.<a href="#section-1.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-2.3">Producer:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.4">
+            <p id="section-1.2-2.4.1">An entity that creates a DNSSEC JWK, for example a key generator or a tool exporting keys from a signer.<a href="#section-1.2-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-2.5">Consumer:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.6">
+            <p id="section-1.2-2.6.1">An entity that parses a DNSSEC JWK, for example a signer importing a key.<a href="#section-1.2-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="dnssec-keys-as-json-web-key">
+<section id="section-2">
+      <h2 id="name-dnssec-keys-as-json-web-key">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-dnssec-keys-as-json-web-key" class="section-name selfRef">DNSSEC Keys as JSON Web Key</a>
+      </h2>
+<p id="section-2-1">A DNSSEC JWK is a JWK as defined in <span>[<a href="#RFC7517" class="cite xref">RFC7517</a>]</span>, consisting of:<a href="#section-2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-2-2">
+<li id="section-2-2.1">
+          <p id="section-2-2.1.1">the key material for the key, encoded using the JWK key type and parameters corresponding to the DNSSEC algorithm, as specified in <a href="#algorithms" class="auto internal xref">Section 2.1</a>;<a href="#section-2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-2-2.2">
+          <p id="section-2-2.2.1">a "dnskey" parameter, as specified in <a href="#dnskey-parameter" class="auto internal xref">Section 2.2</a>; and<a href="#section-2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-2-2.3">
+          <p id="section-2-2.3.1">optionally, other JWK parameters, as specified in <a href="#other-parameters" class="auto internal xref">Section 2.4</a>.<a href="#section-2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-2-3">A DNSSEC JWK representing a private key contains both the public and private key parameters for the key type. A DNSSEC JWK representing a public key contains only the public key parameters. A public DNSSEC JWK can be derived from a private DNSSEC JWK by removing the private key parameters, as described in <span><a href="https://rfc-editor.org/rfc/rfc7518#section-6" class="relref">Section 6</a> of [<a href="#RFC7518" class="cite xref">RFC7518</a>]</span> and <span>[<a href="#RFC8037" class="cite xref">RFC8037</a>]</span>.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<div id="algorithms">
+<section id="section-2.1">
+        <h3 id="name-key-material">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-key-material" class="section-name selfRef">Key Material</a>
+        </h3>
+<p id="section-2.1-1">DNSSEC algorithms are identified by the numbers registered in the "DNS Security Algorithm Numbers" registry <span>[<a href="#IANA-DNSSEC-ALG" class="cite xref">IANA-DNSSEC-ALG</a>]</span>, and the specification referenced for each algorithm in that registry defines its underlying signature scheme and DNSKEY public key encoding. The key material of a DNSSEC key <span class="bcp14">MUST</span> be encoded using the JWK key type ("kty") registered in the "JSON Web Key Types" registry <span>[<a href="#IANA-JOSE" class="cite xref">IANA-JOSE</a>]</span> for that signature scheme, together with any key type specific parameters, such as "crv" for elliptic curve keys. For example:<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.1-2.1">
+            <p id="section-2.1-2.1.1">RSA keys use the "RSA" key type (<span><a href="https://rfc-editor.org/rfc/rfc7518#section-6.3" class="relref">Section 6.3</a> of [<a href="#RFC7518" class="cite xref">RFC7518</a>]</span>).<a href="#section-2.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-2.2">
+            <p id="section-2.1-2.2.1">ECDSA keys use the "EC" key type, with "crv" identifying the curve (<span><a href="https://rfc-editor.org/rfc/rfc7518#section-6.2" class="relref">Section 6.2</a> of [<a href="#RFC7518" class="cite xref">RFC7518</a>]</span>).<a href="#section-2.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-2.3">
+            <p id="section-2.1-2.3.1">EdDSA keys use the "OKP" key type, with "crv" identifying the curve <span>[<a href="#RFC8037" class="cite xref">RFC8037</a>]</span>.<a href="#section-2.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-2.4">
+            <p id="section-2.1-2.4.1">ML-DSA keys use the "AKP" key type, with "alg" identifying the parameter set <span>[<a href="#I-D.ietf-cose-dilithium" class="cite xref">I-D.ietf-cose-dilithium</a>]</span>.<a href="#section-2.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-2.1-3">A DNSSEC algorithm for which no corresponding JWK key type is registered cannot be represented using this specification.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">The JWK key types do not, in general, identify the DNSSEC algorithm; for example, the same RSA key could be used with algorithm 8 (RSASHA256) or 10 (RSASHA512). The DNSSEC algorithm is therefore always given by the "algorithm" member of the "dnskey" parameter.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<p id="section-2.1-5">For RSA private keys, Producers <span class="bcp14">MUST</span> include all of the private key parameters "d", "p", "q", "dp", "dq" and "qi" (<span><a href="https://rfc-editor.org/rfc/rfc7518#section-6.3.2" class="relref">Section 6.3.2</a> of [<a href="#RFC7518" class="cite xref">RFC7518</a>]</span>). Producers <span class="bcp14">MUST NOT</span> include the "oth" parameter.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
+<p id="section-2.1-6">The public key field of the DNSKEY RDATA is derived from the JWK public key parameters using the encoding specified for the DNSSEC algorithm.<a href="#section-2.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="dnskey-parameter">
+<section id="section-2.2">
+        <h3 id="name-the-dnskey-parameter">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-the-dnskey-parameter" class="section-name selfRef">The "dnskey" Parameter</a>
+        </h3>
+<p id="section-2.2-1">The "dnskey" parameter is a JSON object holding the fields of the DNSKEY resource record that are not part of the key material, optionally along with the key tag. It contains the following members, all of which are <span class="bcp14">REQUIRED</span> unless stated otherwise:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-2.2-2">
+          <dt id="section-2.2-2.1">name:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.2">
+            <p id="section-2.2-2.2.1">The owner name of the DNSKEY resource record, as a JSON string. The name <span class="bcp14">MUST</span> be fully qualified (i.e., end with a "."), and <span class="bcp14">MUST</span> be in DNS presentation format as specified in <span><a href="https://rfc-editor.org/rfc/rfc1035#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC1035" class="cite xref">RFC1035</a>]</span>,   with octets that are not printable ASCII, as well as ".", "\", and  other special characters within a label, represented using the "\DDD" or "\X" escapes. Note that, in JSON, the backslash itself is escaped, so the label "b\000rken" appears as "b\\000rken" in the serialized JWK.<a href="#section-2.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.3">algorithm:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.4">
+            <p id="section-2.2-2.4.1">The DNSSEC algorithm number (<span><a href="https://rfc-editor.org/rfc/rfc4034#section-2.1.3" class="relref">Section 2.1.3</a> of [<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>), as a JSON integer.<a href="#section-2.2-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.5">protocol:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.6">
+            <p id="section-2.2-2.6.1">The value of the Protocol field (<span><a href="https://rfc-editor.org/rfc/rfc4034#section-2.1.2" class="relref">Section 2.1.2</a> of [<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>), as a JSON integer. This <span class="bcp14">MUST</span> be 3.<a href="#section-2.2-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.7">flags:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.8">
+            <p id="section-2.2-2.8.1">The value of the Flags field (<span><a href="https://rfc-editor.org/rfc/rfc4034#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>), as a JSON integer in the range 0 to 65535.<a href="#section-2.2-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.9">keytag:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.10">
+            <p id="section-2.2-2.10.1"><span class="bcp14">OPTIONAL</span>. The key tag of the DNSKEY resource record, as computed per  <span><a href="https://rfc-editor.org/rfc/rfc4034#appendix-B" class="relref">Appendix B</a> of [<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>, as a JSON integer.<a href="#section-2.2-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-2.2-3">The key tag is redundant, since it can be computed from the other fields and the key material. Producers <span class="bcp14">SHOULD</span> include it to make the key easy to identify for humans and tools (e.g., to match a key with a DS record or RRSIG) without performing that computation, and to allow Consumers to detect inconsistencies.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.2-4">Consumers <span class="bcp14">MUST</span> ignore unrecognized members of the "dnskey" object.<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="key-timing-and-other-metadata">
+<section id="section-2.3">
+        <h3 id="name-key-timing-and-other-metada">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-key-timing-and-other-metada" class="section-name selfRef">Key Timing and Other Metadata</a>
+        </h3>
+<p id="section-2.3-1">Key management metadata, such as the times at which a key was created or is to be published, activated, retired or removed, is out of scope for this specification. Such information is not part of the DNSKEY resource record and is therefore not included in the "dnskey" parameter. It could be specified in the future as a separate JWK parameter.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="other-parameters">
+<section id="section-2.4">
+        <h3 id="name-other-jwk-parameters">
+<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-other-jwk-parameters" class="section-name selfRef">Other JWK Parameters</a>
+        </h3>
+<p id="section-2.4-1">Producers <span class="bcp14">SHOULD</span> include a "kid" (Key ID) parameter (<span><a href="https://rfc-editor.org/rfc/rfc7517#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC7517" class="cite xref">RFC7517</a>]</span>). When included, it is <span class="bcp14">RECOMMENDED</span> that its value be the JWK Thumbprint <span>[<a href="#RFC7638" class="cite xref">RFC7638</a>]</span> of the key, computed using SHA-256. Note that the "kid" is not the same as the DNSSEC key tag,
+which is not unique and is optionally carried in the "dnskey" parameter.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+<p id="section-2.4-2">The "alg" parameter (<span><a href="https://rfc-editor.org/rfc/rfc7517#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC7517" class="cite xref">RFC7517</a>]</span>) is <span class="bcp14">OPTIONAL</span>, except where required by the key type. When included, it <span class="bcp14">MUST</span> be consistent with the DNSSEC algorithm.<a href="#section-2.4-2" class="pilcrow">¶</a></p>
+<p id="section-2.4-3">Other JWK parameters, such as "use" or "key_ops", <span class="bcp14">MAY</span> be included. Consumers <span class="bcp14">MAY</span> ignore them.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="processing-rules">
+<section id="section-2.5">
+        <h3 id="name-processing-rules">
+<a href="#section-2.5" class="section-number selfRef">2.5. </a><a href="#name-processing-rules" class="section-name selfRef">Processing Rules</a>
+        </h3>
+<p id="section-2.5-1">A Consumer importing a DNSSEC JWK <span class="bcp14">MUST</span>:<a href="#section-2.5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-2.5-2">
+<li id="section-2.5-2.1">
+            <p id="section-2.5-2.1.1">verify that the "dnskey" parameter is present and contains all required members with values of the correct type;<a href="#section-2.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.5-2.2">
+            <p id="section-2.5-2.2.1">verify that the JWK key type and its parameters (e.g., "crv" or "alg") are consistent with the DNSSEC algorithm;<a href="#section-2.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.5-2.3">
+            <p id="section-2.5-2.3.1">construct the DNSKEY RDATA from the "flags", "protocol" and    "algorithm" members and the public key material;<a href="#section-2.5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.5-2.4">
+            <p id="section-2.5-2.4.1">if the "keytag" member is present, compute the key tag of the resulting DNSKEY RDATA and verify that it is equal to the "keytag" member (if specified); and<a href="#section-2.5-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.5-2.5">
+            <p id="section-2.5-2.5.1">for a private key, verify that the private key corresponds to the public key.<a href="#section-2.5-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-2.5-3">If any of these checks fail, the Consumer <span class="bcp14">MUST</span> reject the key.<a href="#section-2.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="key-sets">
+<section id="section-2.6">
+        <h3 id="name-key-sets">
+<a href="#section-2.6" class="section-number selfRef">2.6. </a><a href="#name-key-sets" class="section-name selfRef">Key Sets</a>
+        </h3>
+<p id="section-2.6-1">Multiple DNSSEC JWKs, for example all the keys of a zone, <span class="bcp14">MAY</span> be represented as a JWK Set (<span><a href="https://rfc-editor.org/rfc/rfc7517#section-5" class="relref">Section 5</a> of [<a href="#RFC7517" class="cite xref">RFC7517</a>]</span>), where each key in the set carries its own "dnskey" parameter.<a href="#section-2.6-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="examples">
+<section id="section-3">
+      <h2 id="name-examples">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
+      </h2>
+<p id="section-3-1">This section shows a public DNSSEC JWK. Example private DNSSEC JWKs for a selection of DNSSEC algorithms, together with their DNSKEY resource records, are given in <a href="#example-keys" class="auto internal xref">Appendix A</a>.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">The following public key is derived from the ECDSAP256SHA256 private key in <a href="#example-ecdsap256sha256" class="auto internal xref">Appendix A.2</a> by removing the private key parameter "d":<a href="#section-3-2" class="pilcrow">¶</a></p>
+<span id="name-ecdsap256sha256-public-key"></span><figure id="figure-1">
+        <div class="lang-json sourcecode" id="section-3-3.1">
+<pre>
+{
+  "kid": "ni1azkx1Qe3zOuUw1eRd3oNN_91av68ll49pGTLF_BM",
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "9cqheie08FXlvnU17YJJm1FMUXD4rwi7-4atSdZ3og8",
+  "y": "PR66xkQK4YKumafBX4tYV4N008RfZHQZdMxs_7ToK5A",
+  "dnskey": {
+    "name": "example.com.",
+    "algorithm": 13,
+    "protocol": 3,
+    "flags": 256,
+    "keytag": 9115
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-ecdsap256sha256-public-key" class="selfRef">ECDSAP256SHA256 Public Key</a>
+        </figcaption></figure>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-4">
+      <h2 id="name-iana-considerations">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-4-1">IANA is requested to register the following parameter in the "JSON Web
+Key Parameters" registry <span>[<a href="#RFC7517" class="cite xref">RFC7517</a>]</span>:<a href="#section-4-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4-2">
+        <dt id="section-4-2.1">Parameter Name:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.2">
+          <p id="section-4-2.2.1">dnskey<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.3">Parameter Description:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.4">
+          <p id="section-4-2.4.1">DNSSEC DNSKEY Parameters<a href="#section-4-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.5">Used with "kty" Value(s):</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.6">
+          <p id="section-4-2.6.1">*<a href="#section-4-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.7">Parameter Information Class:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.8">
+          <p id="section-4-2.8.1">Public<a href="#section-4-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.9">Change Controller:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.10">
+          <p id="section-4-2.10.1">IETF<a href="#section-4-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.11">Specification Document(s):</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.12">
+          <p id="section-4-2.12.1"><a href="#dnskey-parameter" class="auto internal xref">Section 2.2</a> of this document<a href="#section-4-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-5">
+      <h2 id="name-security-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-5-1">A DNSSEC JWK containing a private key is sensitive, and compromise of it allows an attacker to sign arbitrary data for the zone. Such keys <span class="bcp14">MUST</span> be protected against unauthorized access, both when stored and when transmitted. Files containing private keys <span class="bcp14">SHOULD</span> only be readable by the entities that need them. When a private key is transported over an untrusted channel or stored in an untrusted location, it <span class="bcp14">SHOULD</span> be encrypted, for example using JSON Web Encryption (JWE) <span>[<a href="#RFC7516" class="cite xref">RFC7516</a>]</span>.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">Producers <span class="bcp14">MUST</span> take care not to accidentally publish a private DNSSEC JWK when a public key was intended. Consumers that only need the public key <span class="bcp14">SHOULD</span> discard any private key parameters.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">The "dnskey" parameter is not cryptographically bound to the key material. An attacker able to modify a DNSSEC JWK could change, for example, the owner name or flags, causing the key to be used for a different zone or in a different role than intended. The key tag check in the processing rules (when the "keytag" member is present) detects accidental inconsistencies, but not deliberate modification, since an attacker can recompute the key tag. The integrity of DNSSEC JWKs <span class="bcp14">MUST</span> therefore be ensured by other means, such as an authenticated transport or a digital signature over the key.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">The security considerations of <span>[<a href="#RFC7517" class="cite xref">RFC7517</a>]</span>, <span>[<a href="#RFC7518" class="cite xref">RFC7518</a>]</span>, <span>[<a href="#RFC8037" class="cite xref">RFC8037</a>]</span> and <span>[<a href="#RFC4034" class="cite xref">RFC4034</a>]</span> also apply.<a href="#section-5-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-6">
+      <h2 id="name-references">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-6.1">
+        <h3 id="name-normative-references">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="IANA-DNSSEC-ALG">[IANA-DNSSEC-ALG]</dt>
+        <dd>
+<span class="refAuthor">IANA</span>, <span class="refTitle">"Domain Name System Security (DNSSEC) Algorithm Numbers"</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.iana.org/assignments/dns-sec-alg-numbers">https://www.iana.org/assignments/dns-sec-alg-numbers</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="IANA-JOSE">[IANA-JOSE]</dt>
+        <dd>
+<span class="refAuthor">IANA</span>, <span class="refTitle">"JSON Object Signing and Encryption (JOSE)"</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.iana.org/assignments/jose">https://www.iana.org/assignments/jose</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC1035">[RFC1035]</dt>
+        <dd>
+<span class="refAuthor">Mockapetris, P.</span>, <span class="refTitle">"Domain names - implementation and specification"</span>, <span class="seriesInfo">STD 13</span>, <span class="seriesInfo">RFC 1035</span>, <span class="seriesInfo">DOI 10.17487/RFC1035</span>, <time datetime="1987-11" class="refDate">November 1987</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1035">https://www.rfc-editor.org/rfc/rfc1035</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4034">[RFC4034]</dt>
+        <dd>
+<span class="refAuthor">Arends, R.</span>, <span class="refAuthor">Austein, R.</span>, <span class="refAuthor">Larson, M.</span>, <span class="refAuthor">Massey, D.</span>, and <span class="refAuthor">S. Rose</span>, <span class="refTitle">"Resource Records for the DNS Security Extensions"</span>, <span class="seriesInfo">RFC 4034</span>, <span class="seriesInfo">DOI 10.17487/RFC4034</span>, <time datetime="2005-03" class="refDate">March 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4034">https://www.rfc-editor.org/rfc/rfc4034</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7517">[RFC7517]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refTitle">"JSON Web Key (JWK)"</span>, <span class="seriesInfo">RFC 7517</span>, <span class="seriesInfo">DOI 10.17487/RFC7517</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7517">https://www.rfc-editor.org/rfc/rfc7517</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7518">[RFC7518]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refTitle">"JSON Web Algorithms (JWA)"</span>, <span class="seriesInfo">RFC 7518</span>, <span class="seriesInfo">DOI 10.17487/RFC7518</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7518">https://www.rfc-editor.org/rfc/rfc7518</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7638">[RFC7638]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span> and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Key (JWK) Thumbprint"</span>, <span class="seriesInfo">RFC 7638</span>, <span class="seriesInfo">DOI 10.17487/RFC7638</span>, <time datetime="2015-09" class="refDate">September 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7638">https://www.rfc-editor.org/rfc/rfc7638</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8037">[RFC8037]</dt>
+        <dd>
+<span class="refAuthor">Liusvaara, I.</span>, <span class="refTitle">"CFRG Elliptic Curve Diffie-Hellman (ECDH) and Signatures in JSON Object Signing and Encryption (JOSE)"</span>, <span class="seriesInfo">RFC 8037</span>, <span class="seriesInfo">DOI 10.17487/RFC8037</span>, <time datetime="2017-01" class="refDate">January 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8037">https://www.rfc-editor.org/rfc/rfc8037</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8259">[RFC8259]</dt>
+      <dd>
+<span class="refAuthor">Bray, T., Ed.</span>, <span class="refTitle">"The JavaScript Object Notation (JSON) Data Interchange Format"</span>, <span class="seriesInfo">STD 90</span>, <span class="seriesInfo">RFC 8259</span>, <span class="seriesInfo">DOI 10.17487/RFC8259</span>, <time datetime="2017-12" class="refDate">December 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8259">https://www.rfc-editor.org/rfc/rfc8259</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-6.2">
+        <h3 id="name-informative-references">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="I-D.ietf-cose-dilithium">[I-D.ietf-cose-dilithium]</dt>
+        <dd>
+<span class="refAuthor">Prorock, M.</span> and <span class="refAuthor">O. Steele</span>, <span class="refTitle">"ML-DSA for JOSE and COSE"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-cose-dilithium-11</span>, <time datetime="2025-11-15" class="refDate">15 November 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-cose-dilithium-11">https://datatracker.ietf.org/doc/html/draft-ietf-cose-dilithium-11</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4033">[RFC4033]</dt>
+        <dd>
+<span class="refAuthor">Arends, R.</span>, <span class="refAuthor">Austein, R.</span>, <span class="refAuthor">Larson, M.</span>, <span class="refAuthor">Massey, D.</span>, and <span class="refAuthor">S. Rose</span>, <span class="refTitle">"DNS Security Introduction and Requirements"</span>, <span class="seriesInfo">RFC 4033</span>, <span class="seriesInfo">DOI 10.17487/RFC4033</span>, <time datetime="2005-03" class="refDate">March 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4033">https://www.rfc-editor.org/rfc/rfc4033</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7516">[RFC7516]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span> and <span class="refAuthor">J. Hildebrand</span>, <span class="refTitle">"JSON Web Encryption (JWE)"</span>, <span class="seriesInfo">RFC 7516</span>, <span class="seriesInfo">DOI 10.17487/RFC7516</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7516">https://www.rfc-editor.org/rfc/rfc7516</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8792">[RFC8792]</dt>
+        <dd>
+<span class="refAuthor">Watsen, K.</span>, <span class="refAuthor">Auerswald, E.</span>, <span class="refAuthor">Farrel, A.</span>, and <span class="refAuthor">Q. Wu</span>, <span class="refTitle">"Handling Long Lines in Content of Internet-Drafts and RFCs"</span>, <span class="seriesInfo">RFC 8792</span>, <span class="seriesInfo">DOI 10.17487/RFC8792</span>, <time datetime="2020-06" class="refDate">June 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8792">https://www.rfc-editor.org/rfc/rfc8792</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9364">[RFC9364]</dt>
+      <dd>
+<span class="refAuthor">Hoffman, P.</span>, <span class="refTitle">"DNS Security Extensions (DNSSEC)"</span>, <span class="seriesInfo">BCP 237</span>, <span class="seriesInfo">RFC 9364</span>, <span class="seriesInfo">DOI 10.17487/RFC9364</span>, <time datetime="2023-02" class="refDate">February 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9364">https://www.rfc-editor.org/rfc/rfc9364</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="example-keys">
+<section id="appendix-A">
+      <h2 id="name-example-keys">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-example-keys" class="section-name selfRef">Example Keys</a>
+      </h2>
+<p id="appendix-A-1">This appendix contains example private DNSSEC JWKs, each followed by the DNSKEY resource record it corresponds to. The keys were generated for this document and are not to be used for any other purpose.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Long lines are wrapped using the single backslash strategy described in <span>[<a href="#RFC8792" class="cite xref">RFC8792</a>]</span>.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">The owner name of the last example, "b\000rken.example.com.", has a zero octet in its first label. In DNS presentation format this octet is written "\000", and because the backslash is escaped again in JSON, it appears as "b\\000rken" in the serialized JWK.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+<div id="rsasha256">
+<section id="appendix-A.1">
+        <h3 id="name-rsasha256">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-rsasha256" class="section-name selfRef">RSASHA256</a>
+        </h3>
+<p id="appendix-A.1-1">The following private key uses RSASHA256 (algorithm 8), with owner name "example.com." and key tag 49458:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<span id="name-rsasha256-private-key"></span><figure id="figure-2">
+          <div class="lang-json sourcecode" id="appendix-A.1-2.1">
+<pre>
+=============== NOTE: '\' line wrapping per RFC 8792 ================
+
+{
+  "kid": "jScRJOUR4SgZYG33jZLNS2rCnBVUweOV8vJczsU0eJ0",
+  "kty": "RSA",
+  "n": "xxNpapt2fBfaMG5rW1rJYRTT2lLRvh3MMlWaKNxW44Q494NSaT0b8sHFBrkn\
+OqWjA1cRoeHVRdoartG6IlZlZnnCju6FhXb1mWk6IpSlj8fUNjrowPqTbGyw2FA00j3n\
+l0UJbhwwDp9HiFj-uAm0pX_oMYmEEkTNHrjW4eb6REPg8-EboU5PcDZx_HHiCPVkyc4C\
+XKRf5ZEBhYnPIYcxuwei_rKj8QOheszdHDcbw6ysg9GG8yB9Q3P0AvgwDoPevUTL18yJ\
+u-DMaHWpSJ2H2tQ45Jqy0lmdF3dImQUipXswc51RM09cGZe8i3nH2GqjM-1GzfFtAdZ3\
+M5plbCfndw",
+  "e": "AQAB",
+  "d": "A2xPIG3ags-KlgRoCyxlKkRIUK8I4grmhnak9A8dEJENXunFD0zLzLsa1X7c\
+ilK4mieZ0YQUSnAYJY__2KeBdQ28VABAKOdyDKvCO9ljfJsg7oSWMpWvo3ckL7jQiubu\
+mWuVLTpsQLjp0XhHFPuk8NphfNL5A7MA9ezGurnhufrxaOf2dD6sKU9afePsnEfNS2Ex\
+VmgGcJE5WzFnso1s0tAROWj2SkTJwSENqEx2vjSMySJAWBkG7otL5NDm4xXkuALrxx1C\
+CTVJR5y5SGypSZOYDE7VFj-E9KE2E2L7aReZ7omoYXTWvgPy6XO4Y9pDR8Sq0W7O9yTs\
+gvUe_u_xYQ",
+  "p": "-3yQvGcP2er34X2QGI99uUoALS0E1SQNEny-xFP-QM82ootCTTEQMkT399BH\
+l-d4DKPLpxssCLUm-KVntR4NetqDSWEqS9h3gsrkT8g6luhcFTJWnsYgiWTvFZwqMT_j\
+ofRFsgvpuEDN_SeGXAFLpl3APMV1Qx6eF4vKcG1f-CE",
+  "q": "yqYMqT0IO1Kx_XXEzLjSqG_Ew8MclvTuvp7CEjITedoNvTaVJAPs-jxN4_ea\
+xT9Mrx88iXYvyS8WKB2SLu4x9wvu4NhmgcCUrh3fqCkBkpgU81qPLrjfRmnpp5h0cZK0\
+puMHFcejv8bSH8Gstz6tPDXlNeZnOAF1j6Nxds-LDJc",
+  "dp": "b_UsmjNnoyQv5nr3w3deCTcgjPwVwq2iBDD03IJoFoIpWIOWqLbG9xotKm3\
+W8ZFiqH3jFCnMmLPM_bTlToRqi97rw6c2JT3hNqEMs1f4fWZEWEtotJaPtZrxtTUos3Q\
+16svMm08iZZy0F5eZASyyeQYTpvphEdh3mRPqs9J9fwE",
+  "dq": "HGtzJRzpFaDAU4J7qhZVfMfH-YhYbxdEkDklkHWzY4hgGuQXwGhIiMOCTPF\
+BpF3_PCQOUlzf0MAoxFF5WdmP6kyjIKdYoOPINi78WdH-ZXesoIBXyj6lGXPrD9UCp5b\
+ifPEj4jsQTOnuOAPqW_yPQP1x-sAoQ6N4wD80v2vV3Vs",
+  "qi": "M-N7jYUpFWAqAUYgC7eZDGi0Pab-fpY01GvLxhYmclq1SdXpG4wOPIozXOd\
+dRpMqYTKKgFksBsQRb2hNXkUxrHrNx5FzsUpzDk7F4RqfXjS-lT4ASO1BTeDdr_FVoLM\
+8UnWHlFxmC5ZkUiL0W31i4TA9PMwGmjOaYCW213C6Gm0",
+  "dnskey": {
+    "name": "example.com.",
+    "algorithm": 8,
+    "protocol": 3,
+    "flags": 256,
+    "keytag": 49458
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-rsasha256-private-key" class="selfRef">RSASHA256 Private Key</a>
+          </figcaption></figure>
+<p id="appendix-A.1-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+<span id="name-rsasha256-dnskey-resource-r"></span><figure id="figure-3">
+          <div class="lang-dns-rr sourcecode" id="appendix-A.1-4.1">
+<pre>
+example.com. IN DNSKEY 256 3 8 (
+    AwEAAccTaWqbdnwX2jBua1tayWEU09pS0b4dzDJVmijcVuOEOPeDUmk9
+    G/LBxQa5JzqlowNXEaHh1UXaGq7RuiJWZWZ5wo7uhYV29ZlpOiKUpY/H
+    1DY66MD6k2xssNhQNNI955dFCW4cMA6fR4hY/rgJtKV/6DGJhBJEzR64
+    1uHm+kRD4PPhG6FOT3A2cfxx4gj1ZMnOAlykX+WRAYWJzyGHMbsHov6y
+    o/EDoXrM3Rw3G8OsrIPRhvMgfUNz9AL4MA6D3r1Ey9fMibvgzGh1qUid
+    h9rUOOSastJZnRd3SJkFIqV7MHOdUTNPXBmXvIt5x9hqozPtRs3xbQHW
+    dzOaZWwn53c= )
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-rsasha256-dnskey-resource-r" class="selfRef">RSASHA256 DNSKEY Resource Record</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="example-ecdsap256sha256">
+<section id="appendix-A.2">
+        <h3 id="name-ecdsap256sha256">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-ecdsap256sha256" class="section-name selfRef">ECDSAP256SHA256</a>
+        </h3>
+<p id="appendix-A.2-1">The following private key uses ECDSAP256SHA256 (algorithm 13), with owner name "example.com." and key tag 9115:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<span id="name-ecdsap256sha256-private-key"></span><figure id="figure-4">
+          <div class="lang-json sourcecode" id="appendix-A.2-2.1">
+<pre>
+{
+  "kid": "ni1azkx1Qe3zOuUw1eRd3oNN_91av68ll49pGTLF_BM",
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "9cqheie08FXlvnU17YJJm1FMUXD4rwi7-4atSdZ3og8",
+  "y": "PR66xkQK4YKumafBX4tYV4N008RfZHQZdMxs_7ToK5A",
+  "d": "ZaTVn0mC1OgwzCvuQ1V3qf6z-6mMjDStD2QzzUQoHxA",
+  "dnskey": {
+    "name": "example.com.",
+    "algorithm": 13,
+    "protocol": 3,
+    "flags": 256,
+    "keytag": 9115
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-ecdsap256sha256-private-key" class="selfRef">ECDSAP256SHA256 Private Key</a>
+          </figcaption></figure>
+<p id="appendix-A.2-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+<span id="name-ecdsap256sha256-dnskey-reso"></span><figure id="figure-5">
+          <div class="lang-dns-rr sourcecode" id="appendix-A.2-4.1">
+<pre>
+example.com. IN DNSKEY 256 3 13 (
+    9cqheie08FXlvnU17YJJm1FMUXD4rwi7+4atSdZ3og89HrrGRArhgq6Z
+    p8Ffi1hXg3TTxF9kdBl0zGz/tOgrkA== )
+</pre>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-ecdsap256sha256-dnskey-reso" class="selfRef">ECDSAP256SHA256 DNSKEY Resource Record</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="ed25519">
+<section id="appendix-A.3">
+        <h3 id="name-ed25519">
+<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-ed25519" class="section-name selfRef">ED25519</a>
+        </h3>
+<p id="appendix-A.3-1">The following private key uses ED25519 (algorithm 15), with owner name "example.com." and key tag 63713:<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<span id="name-ed25519-private-key"></span><figure id="figure-6">
+          <div class="lang-json sourcecode" id="appendix-A.3-2.1">
+<pre>
+{
+  "kid": "sddEIwsSByQMb2_YrSxRWGFZoIZSxVP9SWB7_IZ4X5Q",
+  "kty": "OKP",
+  "crv": "Ed25519",
+  "x": "xX2gT6qJ76coFM3_pAUBxfBZYGnfSZqbNvbZFI428Ao",
+  "d": "Dz9KOncZ00D1WiPEJR_Ec_WXR7YuCbdhUO_H9AERYvw",
+  "dnskey": {
+    "name": "example.com.",
+    "algorithm": 15,
+    "protocol": 3,
+    "flags": 256,
+    "keytag": 63713
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<a href="#name-ed25519-private-key" class="selfRef">ED25519 Private Key</a>
+          </figcaption></figure>
+<p id="appendix-A.3-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.3-3" class="pilcrow">¶</a></p>
+<span id="name-ed25519-dnskey-resource-rec"></span><figure id="figure-7">
+          <div class="lang-dns-rr sourcecode" id="appendix-A.3-4.1">
+<pre>
+example.com. IN DNSKEY 256 3 15 (
+    xX2gT6qJ76coFM3/pAUBxfBZYGnfSZqbNvbZFI428Ao= )
+</pre>
+</div>
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<a href="#name-ed25519-dnskey-resource-rec" class="selfRef">ED25519 DNSKEY Resource Record</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="ml-dsa-44">
+<section id="appendix-A.4">
+        <h3 id="name-ml-dsa-44">
+<a href="#appendix-A.4" class="section-number selfRef">A.4. </a><a href="#name-ml-dsa-44" class="section-name selfRef">ML-DSA-44</a>
+        </h3>
+<p id="appendix-A.4-1">The following private key uses ML-DSA-44 (algorithm 18), with owner name "example.com." and key tag 59828:<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
+<span id="name-ml-dsa-44-private-key"></span><figure id="figure-8">
+          <div class="lang-json sourcecode" id="appendix-A.4-2.1">
+<pre>
+=============== NOTE: '\' line wrapping per RFC 8792 ================
+
+{
+  "kid": "XqS8KAWB0Sc42bmWeKxan98eQKcHS4DVOHGc_kr_68E",
+  "kty": "AKP",
+  "alg": "ML-DSA-44",
+  "pub": "17K0clSq4NtF55MNSpjSyX2PE5fReJ2voXAksxbpvslPyZRtQvGbeadBO7\
+qjPnFJy0LtURVpOsBB-suYit61_g4dhjEYSZW1ksOX0ilOLhT5CqQUujgmiZrEP0zMrL\
+wm6agyuVEY1ctDPL75ZgsAE44IF_YediyidMNq1VTrIqrBFi5KsBrLoeOMTv2PgLZbMz\
+0PcuVd_nHOnB67mInnxWEGwP1zgDoq7P6v3teqPLLO2lTRK9jNNqeM-XWUO0er0l6ICs\
+RS5XQu0ejRqCr6huWQx1jBWuTShA2SvKGlCQ9ASWWX_KfYuVE_GhvabpUKqpjeRnUH1K\
+T1pPBZkhZYLDVy9i7aiQWrNYFnDEoCd3oz4Mpylf2PT_bRoKOnaD1l9fX3_GDaAj6CbF\
+-SFEwC99G6EHWYdVPqk2f8122ZC3-pnNRa_biDbUPkWfUYffBYR5cJoB6mg1k1-nBGCZ\
+DNPcG6QBupS6sd3kGsZ6szGdysoGBI1MTu8n7hOpwX0FOPQw8tZC3CQVZg3niHfY2KvH\
+JSOXjAQuQoX0MZhGxEEmJCl2hEwQ5Va6IVtacZ5Z0MayqW05hZBx_cws3nUkp77a5U6F\
+sxjoVOj-Ky8-36yXGRKCcKr9HlBEw6T9r9n_MfkHhLjo5FlhRKDa9YZRHT2ZYrnqla8Z\
+e05fxg8rHtFd46W-9fib3HnZEFHZsoFudPpUUx79wcvnTUSIV_R2vNWPIcC2U7O3ak4H\
+amVZowJxhVXMY_dIWaq6uSXwI4YcqM0Pe62yhx9n1VMm10URNa1F9KG6aRGPuyyKMO7J\
+OS7z-XcGbJrdXHEMxkexUU0hfZWMcBfD6Q_SDATmdLkEhuk3CjGgAdMvRzl55JBnSefk\
+d_oLdFCPil8jeDErg8Jb04jKCw__dHi69CtxZn7arJfEaxKWQ-WG5bBVoMIRlG1PNuZ1\
+vtWGD6BCoxXZgmFk1qkjfDWl-_SVSQpb1N8ki5XEqud4S2BWcxZqxCRbW0sIKgnpMj5i\
+8geMW3Z4NEbe_XNq06NwLUmwiYRJAKYYMzl7xEGbMNepegs4fBkRR0xNQbU-Mql3rLbw\
+6nXbZbs55Z5wHnaVfe9vLURVnDGncSK1IE47XCGfFoixTtC8C4AbPm6C3NQ-nA6fQXRM\
+2YFb0byIINi7Ej8E-s0bG2hd1aKxuNu_PtkzZw8JWhgLTxktCLELj6u9_MKyRRjjLuoK\
+XgyQTKhEeACD87DNLQuLavZ7w1W5SUAl3HsKePqA46Lb_rUTKIUdYHgZjpSTZRrnh-wC\
+UfkiujDp9R32Km1yeEzz3SBTkxdt-jJKUSvZSXCjbdNKUUqGeR8Os28BRbCatkZRtKAx\
+OymWEaKhxIiRYnWYdooxFAYLpEQ0ht9RUioc6IswmFwhb45u0XjdVnswSg1Mr7qIKig0\
+LxepqiauWNtjAIPSw1j99WbD9dYqQoVnvJ6ozpXKoPNUdLC_qPM5olCrTfzyCDvo7vvB\
+BV4Y_hU3DuyyYFZtg_8GshGq7EPKKbVMzQD4gVokZe8LRlFcx-QfMSTwnv_3OTCatYsp\
+oUWaALzlA46TjJZ49y6w5O5f2q5m2fhXP8l_xCtJWfS_i2HXhDPoawM11ukZHE2L9Iez\
+kFwQjP1qwksM633LfPUfhNDtaHuV6uscUzwG8NlwI9kqcIJYN7Wbpst9TlawqHwgOGKu\
+jzFbpZJejt76Z5NpoiAnZhUfFqll-fgeznbMBwtVhp5NuXhM8FyDCzJCyDEg",
+  "priv": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
+  "dnskey": {
+    "name": "example.com.",
+    "algorithm": 18,
+    "protocol": 3,
+    "flags": 256,
+    "keytag": 59828
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-ml-dsa-44-private-key" class="selfRef">ML-DSA-44 Private Key</a>
+          </figcaption></figure>
+<p id="appendix-A.4-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.4-3" class="pilcrow">¶</a></p>
+<span id="name-ml-dsa-44-dnskey-resource-r"></span><figure id="figure-9">
+          <div class="lang-dns-rr sourcecode" id="appendix-A.4-4.1">
+<pre>
+example.com. IN DNSKEY 256 3 18 (
+    17K0clSq4NtF55MNSpjSyX2PE5fReJ2voXAksxbpvslPyZRtQvGbeadB
+    O7qjPnFJy0LtURVpOsBB+suYit61/g4dhjEYSZW1ksOX0ilOLhT5CqQU
+    ujgmiZrEP0zMrLwm6agyuVEY1ctDPL75ZgsAE44IF/YediyidMNq1VTr
+    IqrBFi5KsBrLoeOMTv2PgLZbMz0PcuVd/nHOnB67mInnxWEGwP1zgDoq
+    7P6v3teqPLLO2lTRK9jNNqeM+XWUO0er0l6ICsRS5XQu0ejRqCr6huWQ
+    x1jBWuTShA2SvKGlCQ9ASWWX/KfYuVE/GhvabpUKqpjeRnUH1KT1pPBZ
+    khZYLDVy9i7aiQWrNYFnDEoCd3oz4Mpylf2PT/bRoKOnaD1l9fX3/GDa
+    Aj6CbF+SFEwC99G6EHWYdVPqk2f8122ZC3+pnNRa/biDbUPkWfUYffBY
+    R5cJoB6mg1k1+nBGCZDNPcG6QBupS6sd3kGsZ6szGdysoGBI1MTu8n7h
+    OpwX0FOPQw8tZC3CQVZg3niHfY2KvHJSOXjAQuQoX0MZhGxEEmJCl2hE
+    wQ5Va6IVtacZ5Z0MayqW05hZBx/cws3nUkp77a5U6FsxjoVOj+Ky8+36
+    yXGRKCcKr9HlBEw6T9r9n/MfkHhLjo5FlhRKDa9YZRHT2ZYrnqla8Ze0
+    5fxg8rHtFd46W+9fib3HnZEFHZsoFudPpUUx79wcvnTUSIV/R2vNWPIc
+    C2U7O3ak4HamVZowJxhVXMY/dIWaq6uSXwI4YcqM0Pe62yhx9n1VMm10
+    URNa1F9KG6aRGPuyyKMO7JOS7z+XcGbJrdXHEMxkexUU0hfZWMcBfD6Q
+    /SDATmdLkEhuk3CjGgAdMvRzl55JBnSefkd/oLdFCPil8jeDErg8Jb04
+    jKCw//dHi69CtxZn7arJfEaxKWQ+WG5bBVoMIRlG1PNuZ1vtWGD6BCox
+    XZgmFk1qkjfDWl+/SVSQpb1N8ki5XEqud4S2BWcxZqxCRbW0sIKgnpMj
+    5i8geMW3Z4NEbe/XNq06NwLUmwiYRJAKYYMzl7xEGbMNepegs4fBkRR0
+    xNQbU+Mql3rLbw6nXbZbs55Z5wHnaVfe9vLURVnDGncSK1IE47XCGfFo
+    ixTtC8C4AbPm6C3NQ+nA6fQXRM2YFb0byIINi7Ej8E+s0bG2hd1aKxuN
+    u/PtkzZw8JWhgLTxktCLELj6u9/MKyRRjjLuoKXgyQTKhEeACD87DNLQ
+    uLavZ7w1W5SUAl3HsKePqA46Lb/rUTKIUdYHgZjpSTZRrnh+wCUfkiuj
+    Dp9R32Km1yeEzz3SBTkxdt+jJKUSvZSXCjbdNKUUqGeR8Os28BRbCatk
+    ZRtKAxOymWEaKhxIiRYnWYdooxFAYLpEQ0ht9RUioc6IswmFwhb45u0X
+    jdVnswSg1Mr7qIKig0LxepqiauWNtjAIPSw1j99WbD9dYqQoVnvJ6ozp
+    XKoPNUdLC/qPM5olCrTfzyCDvo7vvBBV4Y/hU3DuyyYFZtg/8GshGq7E
+    PKKbVMzQD4gVokZe8LRlFcx+QfMSTwnv/3OTCatYspoUWaALzlA46TjJ
+    Z49y6w5O5f2q5m2fhXP8l/xCtJWfS/i2HXhDPoawM11ukZHE2L9IezkF
+    wQjP1qwksM633LfPUfhNDtaHuV6uscUzwG8NlwI9kqcIJYN7Wbpst9Tl
+    awqHwgOGKujzFbpZJejt76Z5NpoiAnZhUfFqll+fgeznbMBwtVhp5NuX
+    hM8FyDCzJCyDEg== )
+</pre>
+</div>
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<a href="#name-ml-dsa-44-dnskey-resource-r" class="selfRef">ML-DSA-44 DNSKEY Resource Record</a>
+          </figcaption></figure>
+</section>
+</div>
+<div id="ed25519-with-escaped-owner-name">
+<section id="appendix-A.5">
+        <h3 id="name-ed25519-with-escaped-owner-">
+<a href="#appendix-A.5" class="section-number selfRef">A.5. </a><a href="#name-ed25519-with-escaped-owner-" class="section-name selfRef">ED25519 with Escaped Owner Name</a>
+        </h3>
+<p id="appendix-A.5-1">The following private key uses ED25519 (algorithm 15), with owner name "b\000rken.example.com." and key tag 17078:<a href="#appendix-A.5-1" class="pilcrow">¶</a></p>
+<span id="name-ed25519-with-escaped-owner-n"></span><figure id="figure-10">
+          <div class="lang-json sourcecode" id="appendix-A.5-2.1">
+<pre>
+{
+  "kid": "uJYXQ0ZhGzTiAt0jgXgPDWKExUB3cls1NXInBRsqYU0",
+  "kty": "OKP",
+  "crv": "Ed25519",
+  "x": "w_VxpL9dTguTG_ivgqZFa9lkjiPkR-g15ktPAhuTIt8",
+  "d": "NQ4G7dnYiYJMO2UYGqG82Rn2zsX24P6lfiteOBR78PA",
+  "dnskey": {
+    "name": "b\\000rken.example.com.",
+    "algorithm": 15,
+    "protocol": 3,
+    "flags": 256,
+    "keytag": 17078
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<a href="#name-ed25519-with-escaped-owner-n" class="selfRef">ED25519 with Escaped Owner Name Private Key</a>
+          </figcaption></figure>
+<p id="appendix-A.5-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.5-3" class="pilcrow">¶</a></p>
+<span id="name-ed25519-with-escaped-owner-na"></span><figure id="figure-11">
+          <div class="lang-dns-rr sourcecode" id="appendix-A.5-4.1">
+<pre>
+b\000rken.example.com. IN DNSKEY 256 3 15 (
+    w/VxpL9dTguTG/ivgqZFa9lkjiPkR+g15ktPAhuTIt8= )
+</pre>
+</div>
+<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
+<a href="#name-ed25519-with-escaped-owner-na" class="selfRef">ED25519 with Escaped Owner Name DNSKEY Resource Record</a>
+          </figcaption></figure>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgements">
+<section id="appendix-B">
+      <h2 id="name-acknowledgements">
+<a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      </h2>
+<p id="appendix-B-1">TBD.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Jakob Schlyter</span></div>
+<div dir="auto" class="left"><span class="org">Kirei AB</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:jakob@kirei.se" class="email">jakob@kirei.se</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
