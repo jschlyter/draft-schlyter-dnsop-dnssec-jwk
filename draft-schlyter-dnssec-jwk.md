@@ -110,7 +110,7 @@ The public key field of the DNSKEY RDATA is derived from the JWK public key para
 The "dnskey" parameter is a JSON object holding the fields of the DNSKEY resource record that are not part of the key material, optionally along with the key tag. It contains the following members, all of which are REQUIRED unless stated otherwise:
 
 name:
-: The owner name of the DNSKEY resource record, as a JSON string. The name MUST be fully qualified (i.e., end with a "."), and MUST be in DNS presentation format as specified in {{Section 5.1 of RFC1035}},   with octets that are not printable ASCII, as well as ".", "\\", and  other special characters within a label, represented using the "\\DDD" or "\\X" escapes. Note that, in JSON, the backslash itself is escaped, so the label "b\\000rken" appears as "b\\\\000rken" in the serialized JWK.
+: The owner name of the DNSKEY resource record, as a JSON string. The name MUST be fully qualified (i.e., end with a "."), and MUST be in DNS presentation format as specified in {{Section 5.1 of RFC1035}}, with octets that are not printable ASCII, as well as ".", "\\", and other special characters within a label, represented using the "\\DDD" escapes. Note that, in JSON, the backslash itself is escaped, so the label "b\\000rken" appears as "b\\\\000rken" in the serialized JWK.
 
 algorithm:
 : The DNSSEC algorithm number ({{Section 2.1.3 of RFC4034}}), as a JSON integer.
