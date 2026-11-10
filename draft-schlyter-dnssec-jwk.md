@@ -122,7 +122,7 @@ flags:
 : The value of the Flags field ({{Section 2.1.1 of RFC4034}}), as a JSON integer in the range 0 to 65535.
 
 keytag:
-: OPTIONAL. The key tag of the DNSKEY resource record, as computed per  {{Appendix B of RFC4034}}, as a JSON integer.
+: OPTIONAL. The key tag of the DNSKEY resource record, as computed per {{Appendix B of RFC4034}}, as a JSON integer.
 
 The key tag is redundant, since it can be computed from the other fields and the key material. Producers SHOULD include it to make the key easy to identify for humans and tools (e.g., to match a key with a DS record or RRSIG) without performing that computation, and to allow Consumers to detect inconsistencies.
 
@@ -147,7 +147,7 @@ A Consumer importing a DNSSEC JWK MUST:
 
 1. verify that the "dnskey" parameter is present and contains all required members with values of the correct type;
 2. verify that the JWK key type and its parameters (e.g., "crv" or "alg") are consistent with the DNSSEC algorithm;
-3. construct the DNSKEY RDATA from the "flags", "protocol" and    "algorithm" members and the public key material;
+3. construct the DNSKEY RDATA from the "flags", "protocol" and "algorithm" members and the public key material;
 4. if the "keytag" member is present, compute the key tag of the resulting DNSKEY RDATA and verify that it is equal to the "keytag" member (if specified); and
 5. for a private key, verify that the private key corresponds to the public key.
 
