@@ -161,7 +161,7 @@ Multiple DNSSEC JWKs, for example all the keys of a zone, MAY be represented as 
 
 This section shows a public DNSSEC JWK. Example private DNSSEC JWKs for a selection of DNSSEC algorithms, together with their DNSKEY resource records, are given in {{example-keys}}.
 
-The following public key is derived from the ECDSAP256SHA256 private key in {{example-ecdsap256sha256}} by removing the private key parameter "d":
+The following public key is derived from the ECDSA Curve P-256 with SHA-256 private key in {{example-ecdsap256sha256}} by removing the private key parameter "d":
 
 ~~~ json
 {
@@ -179,7 +179,7 @@ The following public key is derived from the ECDSAP256SHA256 private key in {{ex
   }
 }
 ~~~
-{: title="ECDSAP256SHA256 Public Key"}
+{: title="ECDSA Curve P-256 with SHA-256 Public Key"}
 
 # IANA Considerations
 
