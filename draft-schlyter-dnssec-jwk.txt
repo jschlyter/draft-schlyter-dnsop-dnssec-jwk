@@ -207,8 +207,8 @@ Table of Contents
       and MUST be in DNS presentation format as specified in Section 5.1
       of [RFC1035], with octets that are not printable ASCII, as well as
       ".", "\", and other special characters within a label, represented
-      using the "\DDD" or "\X" escapes.  Note that, in JSON, the
-      backslash itself is escaped, so the label "b\000rken" appears as
+      using the "\DDD" escapes.  Note that, in JSON, the backslash
+      itself is escaped, so the label "b\000rken" appears as
       "b\\000rken" in the serialized JWK.
 
    algorithm:  The DNSSEC algorithm number (Section 2.1.3 of [RFC4034]),

@@ -1317,7 +1317,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <span class="break"></span><dl class="dlParallel" id="section-2.2-2">
           <dt id="section-2.2-2.1">name:</dt>
           <dd style="margin-left: 1.5em" id="section-2.2-2.2">
-            <p id="section-2.2-2.2.1">The owner name of the DNSKEY resource record, as a JSON string. The name <span class="bcp14">MUST</span> be fully qualified (i.e., end with a "."), and <span class="bcp14">MUST</span> be in DNS presentation format as specified in <span><a href="https://rfc-editor.org/rfc/rfc1035#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC1035" class="cite xref">RFC1035</a>]</span>,   with octets that are not printable ASCII, as well as ".", "\", and  other special characters within a label, represented using the "\DDD" or "\X" escapes. Note that, in JSON, the backslash itself is escaped, so the label "b\000rken" appears as "b\\000rken" in the serialized JWK.<a href="#section-2.2-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-2.2-2.2.1">The owner name of the DNSKEY resource record, as a JSON string. The name <span class="bcp14">MUST</span> be fully qualified (i.e., end with a "."), and <span class="bcp14">MUST</span> be in DNS presentation format as specified in <span><a href="https://rfc-editor.org/rfc/rfc1035#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC1035" class="cite xref">RFC1035</a>]</span>, with octets that are not printable ASCII, as well as ".", "\", and other special characters within a label, represented using the "\DDD" escapes. Note that, in JSON, the backslash itself is escaped, so the label "b\000rken" appears as "b\\000rken" in the serialized JWK.<a href="#section-2.2-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-2.2-2.3">algorithm:</dt>
@@ -1337,7 +1337,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
           <dd class="break"></dd>
 <dt id="section-2.2-2.9">keytag:</dt>
           <dd style="margin-left: 1.5em" id="section-2.2-2.10">
-            <p id="section-2.2-2.10.1"><span class="bcp14">OPTIONAL</span>. The key tag of the DNSKEY resource record, as computed per  <span><a href="https://rfc-editor.org/rfc/rfc4034#appendix-B" class="relref">Appendix B</a> of [<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>, as a JSON integer.<a href="#section-2.2-2.10.1" class="pilcrow">¶</a></p>
+            <p id="section-2.2-2.10.1"><span class="bcp14">OPTIONAL</span>. The key tag of the DNSKEY resource record, as computed per <span><a href="https://rfc-editor.org/rfc/rfc4034#appendix-B" class="relref">Appendix B</a> of [<a href="#RFC4034" class="cite xref">RFC4034</a>]</span>, as a JSON integer.<a href="#section-2.2-2.10.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1378,7 +1378,7 @@ which is not unique and is optionally carried in the "dnskey" parameter.<a href=
             <p id="section-2.5-2.2.1">verify that the JWK key type and its parameters (e.g., "crv" or "alg") are consistent with the DNSSEC algorithm;<a href="#section-2.5-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-2.5-2.3">
-            <p id="section-2.5-2.3.1">construct the DNSKEY RDATA from the "flags", "protocol" and    "algorithm" members and the public key material;<a href="#section-2.5-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-2.5-2.3.1">construct the DNSKEY RDATA from the "flags", "protocol" and "algorithm" members and the public key material;<a href="#section-2.5-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-2.5-2.4">
             <p id="section-2.5-2.4.1">if the "keytag" member is present, compute the key tag of the resulting DNSKEY RDATA and verify that it is equal to the "keytag" member (if specified); and<a href="#section-2.5-2.4.1" class="pilcrow">¶</a></p>
