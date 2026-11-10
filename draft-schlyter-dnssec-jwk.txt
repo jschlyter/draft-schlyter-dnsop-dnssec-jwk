@@ -289,8 +289,9 @@ Table of Contents
    for a selection of DNSSEC algorithms, together with their DNSKEY
    resource records, are given in Appendix A.
 
-   The following public key is derived from the ECDSAP256SHA256 private
-   key in Appendix A.2 by removing the private key parameter "d":
+   The following public key is derived from the ECDSA Curve P-256 with
+   SHA-256 private key in Appendix A.2 by removing the private key
+   parameter "d":
 
    {
      "kid": "ni1azkx1Qe3zOuUw1eRd3oNN_91av68ll49pGTLF_BM",
@@ -307,7 +308,7 @@ Table of Contents
      }
    }
 
-                    Figure 1: ECDSAP256SHA256 Public Key
+            Figure 1: ECDSA Curve P-256 with SHA-256 Public Key
 
 4.  IANA Considerations
 

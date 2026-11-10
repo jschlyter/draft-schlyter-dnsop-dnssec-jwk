@@ -1195,7 +1195,7 @@ svg {
                 <p id="section-toc.1-1.7.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-rsa-sha-256" class="internal xref">RSA/SHA-256</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-ecdsa-curve-p-256-with-sha-" class="internal xref">ECDSA Curve P-256 with SHA-256</a></p>
+                <p id="section-toc.1-1.7.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-ecdsa-curve-p-256-with-sha-2" class="internal xref">ECDSA Curve P-256 with SHA-256</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
                 <p id="section-toc.1-1.7.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-ed25519" class="internal xref">Ed25519</a></p>
@@ -1406,8 +1406,8 @@ which is not unique and is optionally carried in the "dnskey" parameter.<a href=
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
       </h2>
 <p id="section-3-1">This section shows a public DNSSEC JWK. Example private DNSSEC JWKs for a selection of DNSSEC algorithms, together with their DNSKEY resource records, are given in <a href="#example-keys" class="auto internal xref">Appendix A</a>.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">The following public key is derived from the ECDSAP256SHA256 private key in <a href="#example-ecdsap256sha256" class="auto internal xref">Appendix A.2</a> by removing the private key parameter "d":<a href="#section-3-2" class="pilcrow">¶</a></p>
-<span id="name-ecdsap256sha256-public-key"></span><figure id="figure-1">
+<p id="section-3-2">The following public key is derived from the ECDSA Curve P-256 with SHA-256 private key in <a href="#example-ecdsap256sha256" class="auto internal xref">Appendix A.2</a> by removing the private key parameter "d":<a href="#section-3-2" class="pilcrow">¶</a></p>
+<span id="name-ecdsa-curve-p-256-with-sha-"></span><figure id="figure-1">
         <div class="lang-json sourcecode" id="section-3-3.1">
 <pre>
 {
@@ -1427,7 +1427,7 @@ which is not unique and is optionally carried in the "dnskey" parameter.<a href=
 </pre>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
-<a href="#name-ecdsap256sha256-public-key" class="selfRef">ECDSAP256SHA256 Public Key</a>
+<a href="#name-ecdsa-curve-p-256-with-sha-" class="selfRef">ECDSA Curve P-256 with SHA-256 Public Key</a>
         </figcaption></figure>
 </section>
 </div>
@@ -1656,11 +1656,11 @@ example.com. IN DNSKEY 256 3 8 (
 </div>
 <div id="example-ecdsap256sha256">
 <section id="appendix-A.2">
-        <h3 id="name-ecdsa-curve-p-256-with-sha-">
-<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-ecdsa-curve-p-256-with-sha-" class="section-name selfRef">ECDSA Curve P-256 with SHA-256</a>
+        <h3 id="name-ecdsa-curve-p-256-with-sha-2">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-ecdsa-curve-p-256-with-sha-2" class="section-name selfRef">ECDSA Curve P-256 with SHA-256</a>
         </h3>
 <p id="appendix-A.2-1">The following private key uses ECDSA Curve P-256 with SHA-256 (algorithm 13, mnemonic ECDSAP256SHA256), with owner name "example.com." and key tag 9115:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
-<span id="name-ecdsa-curve-p-256-with-sha-2"></span><figure id="figure-4">
+<span id="name-ecdsa-curve-p-256-with-sha-25"></span><figure id="figure-4">
           <div class="lang-json sourcecode" id="appendix-A.2-2.1">
 <pre>
 {
@@ -1681,10 +1681,10 @@ example.com. IN DNSKEY 256 3 8 (
 </pre>
 </div>
 <figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
-<a href="#name-ecdsa-curve-p-256-with-sha-2" class="selfRef">ECDSA Curve P-256 with SHA-256 Private Key</a>
+<a href="#name-ecdsa-curve-p-256-with-sha-25" class="selfRef">ECDSA Curve P-256 with SHA-256 Private Key</a>
           </figcaption></figure>
 <p id="appendix-A.2-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
-<span id="name-ecdsa-curve-p-256-with-sha-25"></span><figure id="figure-5">
+<span id="name-ecdsa-curve-p-256-with-sha-256"></span><figure id="figure-5">
           <div class="lang-dns-rr sourcecode" id="appendix-A.2-4.1">
 <pre>
 example.com. IN DNSKEY 256 3 13 (
@@ -1693,7 +1693,7 @@ example.com. IN DNSKEY 256 3 13 (
 </pre>
 </div>
 <figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
-<a href="#name-ecdsa-curve-p-256-with-sha-25" class="selfRef">ECDSA Curve P-256 with SHA-256 DNSKEY Resource Record</a>
+<a href="#name-ecdsa-curve-p-256-with-sha-256" class="selfRef">ECDSA Curve P-256 with SHA-256 DNSKEY Resource Record</a>
           </figcaption></figure>
 </section>
 </div>
