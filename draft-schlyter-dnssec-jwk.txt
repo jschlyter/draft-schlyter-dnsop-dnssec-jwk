@@ -26,10 +26,6 @@ Discussion Venues
 
    This note is to be removed before publishing as an RFC.
 
-   Discussion of this document takes place on the Domain Name System
-   Security Working Group mailing list (dns-security@lists.tislabs.com),
-   which is archived at ftp://ftp.tis.com/pub/lists/dns-security.
-
    Source for this draft and an issue tracker can be found at
    https://github.com/jschlyter/draft-schlyter-dnssec-jwk.
 
