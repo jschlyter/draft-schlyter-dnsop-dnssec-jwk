@@ -1192,13 +1192,13 @@ svg {
             <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-example-keys" class="internal xref">Example Keys</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-rsasha256" class="internal xref">RSASHA256</a></p>
+                <p id="section-toc.1-1.7.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-rsa-sha-256" class="internal xref">RSA/SHA-256</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-ecdsap256sha256" class="internal xref">ECDSAP256SHA256</a></p>
+                <p id="section-toc.1-1.7.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-ecdsa-curve-p-256-with-sha-" class="internal xref">ECDSA Curve P-256 with SHA-256</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
-                <p id="section-toc.1-1.7.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-ed25519" class="internal xref">ED25519</a></p>
+                <p id="section-toc.1-1.7.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-ed25519" class="internal xref">Ed25519</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
                 <p id="section-toc.1-1.7.2.4.1"><a href="#appendix-A.4" class="auto internal xref">A.4</a>.  <a href="#name-ml-dsa-44" class="internal xref">ML-DSA-44</a></p>
@@ -1580,13 +1580,13 @@ Key Parameters" registry <span>[<a href="#RFC7517" class="cite xref">RFC7517</a>
 <p id="appendix-A-1">This appendix contains example private DNSSEC JWKs, each followed by the DNSKEY resource record it corresponds to. The keys were generated for this document and are not to be used for any other purpose.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 <p id="appendix-A-2">Long lines are wrapped using the single backslash strategy described in <span>[<a href="#RFC8792" class="cite xref">RFC8792</a>]</span>.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
 <p id="appendix-A-3">The owner name of the last example, "b\000rken.example.com.", has a zero octet in its first label. In DNS presentation format this octet is written "\000", and because the backslash is escaped again in JSON, it appears as "b\\000rken" in the serialized JWK.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
-<div id="rsasha256">
+<div id="rsasha-256">
 <section id="appendix-A.1">
-        <h3 id="name-rsasha256">
-<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-rsasha256" class="section-name selfRef">RSASHA256</a>
+        <h3 id="name-rsa-sha-256">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-rsa-sha-256" class="section-name selfRef">RSA/SHA-256</a>
         </h3>
-<p id="appendix-A.1-1">The following private key uses RSASHA256 (algorithm 8), with owner name "example.com." and key tag 49458:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
-<span id="name-rsasha256-private-key"></span><figure id="figure-2">
+<p id="appendix-A.1-1">The following private key uses RSA/SHA-256 (algorithm 8, mnemonic RSASHA256), with owner name "example.com." and key tag 49458:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<span id="name-rsa-sha-256-private-key"></span><figure id="figure-2">
           <div class="lang-json sourcecode" id="appendix-A.1-2.1">
 <pre>
 =============== NOTE: '\' line wrapping per RFC 8792 ================
@@ -1633,10 +1633,10 @@ dRpMqYTKKgFksBsQRb2hNXkUxrHrNx5FzsUpzDk7F4RqfXjS-lT4ASO1BTeDdr_FVoLM\
 </pre>
 </div>
 <figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
-<a href="#name-rsasha256-private-key" class="selfRef">RSASHA256 Private Key</a>
+<a href="#name-rsa-sha-256-private-key" class="selfRef">RSA/SHA-256 Private Key</a>
           </figcaption></figure>
 <p id="appendix-A.1-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
-<span id="name-rsasha256-dnskey-resource-r"></span><figure id="figure-3">
+<span id="name-rsa-sha-256-dnskey-resource"></span><figure id="figure-3">
           <div class="lang-dns-rr sourcecode" id="appendix-A.1-4.1">
 <pre>
 example.com. IN DNSKEY 256 3 8 (
@@ -1650,17 +1650,17 @@ example.com. IN DNSKEY 256 3 8 (
 </pre>
 </div>
 <figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
-<a href="#name-rsasha256-dnskey-resource-r" class="selfRef">RSASHA256 DNSKEY Resource Record</a>
+<a href="#name-rsa-sha-256-dnskey-resource" class="selfRef">RSA/SHA-256 DNSKEY Resource Record</a>
           </figcaption></figure>
 </section>
 </div>
 <div id="example-ecdsap256sha256">
 <section id="appendix-A.2">
-        <h3 id="name-ecdsap256sha256">
-<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-ecdsap256sha256" class="section-name selfRef">ECDSAP256SHA256</a>
+        <h3 id="name-ecdsa-curve-p-256-with-sha-">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-ecdsa-curve-p-256-with-sha-" class="section-name selfRef">ECDSA Curve P-256 with SHA-256</a>
         </h3>
-<p id="appendix-A.2-1">The following private key uses ECDSAP256SHA256 (algorithm 13), with owner name "example.com." and key tag 9115:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
-<span id="name-ecdsap256sha256-private-key"></span><figure id="figure-4">
+<p id="appendix-A.2-1">The following private key uses ECDSA Curve P-256 with SHA-256 (algorithm 13, mnemonic ECDSAP256SHA256), with owner name "example.com." and key tag 9115:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<span id="name-ecdsa-curve-p-256-with-sha-2"></span><figure id="figure-4">
           <div class="lang-json sourcecode" id="appendix-A.2-2.1">
 <pre>
 {
@@ -1681,10 +1681,10 @@ example.com. IN DNSKEY 256 3 8 (
 </pre>
 </div>
 <figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
-<a href="#name-ecdsap256sha256-private-key" class="selfRef">ECDSAP256SHA256 Private Key</a>
+<a href="#name-ecdsa-curve-p-256-with-sha-2" class="selfRef">ECDSA Curve P-256 with SHA-256 Private Key</a>
           </figcaption></figure>
 <p id="appendix-A.2-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
-<span id="name-ecdsap256sha256-dnskey-reso"></span><figure id="figure-5">
+<span id="name-ecdsa-curve-p-256-with-sha-25"></span><figure id="figure-5">
           <div class="lang-dns-rr sourcecode" id="appendix-A.2-4.1">
 <pre>
 example.com. IN DNSKEY 256 3 13 (
@@ -1693,16 +1693,16 @@ example.com. IN DNSKEY 256 3 13 (
 </pre>
 </div>
 <figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
-<a href="#name-ecdsap256sha256-dnskey-reso" class="selfRef">ECDSAP256SHA256 DNSKEY Resource Record</a>
+<a href="#name-ecdsa-curve-p-256-with-sha-25" class="selfRef">ECDSA Curve P-256 with SHA-256 DNSKEY Resource Record</a>
           </figcaption></figure>
 </section>
 </div>
 <div id="ed25519">
 <section id="appendix-A.3">
         <h3 id="name-ed25519">
-<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-ed25519" class="section-name selfRef">ED25519</a>
+<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-ed25519" class="section-name selfRef">Ed25519</a>
         </h3>
-<p id="appendix-A.3-1">The following private key uses ED25519 (algorithm 15), with owner name "example.com." and key tag 63713:<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-1">The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with owner name "example.com." and key tag 63713:<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
 <span id="name-ed25519-private-key"></span><figure id="figure-6">
           <div class="lang-json sourcecode" id="appendix-A.3-2.1">
 <pre>
@@ -1723,7 +1723,7 @@ example.com. IN DNSKEY 256 3 13 (
 </pre>
 </div>
 <figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
-<a href="#name-ed25519-private-key" class="selfRef">ED25519 Private Key</a>
+<a href="#name-ed25519-private-key" class="selfRef">Ed25519 Private Key</a>
           </figcaption></figure>
 <p id="appendix-A.3-3">The corresponding DNSKEY resource record is:<a href="#appendix-A.3-3" class="pilcrow">¶</a></p>
 <span id="name-ed25519-dnskey-resource-rec"></span><figure id="figure-7">
@@ -1734,7 +1734,7 @@ example.com. IN DNSKEY 256 3 15 (
 </pre>
 </div>
 <figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
-<a href="#name-ed25519-dnskey-resource-rec" class="selfRef">ED25519 DNSKEY Resource Record</a>
+<a href="#name-ed25519-dnskey-resource-rec" class="selfRef">Ed25519 DNSKEY Resource Record</a>
           </figcaption></figure>
 </section>
 </div>
@@ -1743,7 +1743,7 @@ example.com. IN DNSKEY 256 3 15 (
         <h3 id="name-ml-dsa-44">
 <a href="#appendix-A.4" class="section-number selfRef">A.4. </a><a href="#name-ml-dsa-44" class="section-name selfRef">ML-DSA-44</a>
         </h3>
-<p id="appendix-A.4-1">The following private key uses ML-DSA-44 (algorithm 18), with owner name "example.com." and key tag 59828:<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.4-1">The following private key uses ML-DSA-44 (algorithm 18, mnemonic MLDSA44), with owner name "example.com." and key tag 59828:<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
 <span id="name-ml-dsa-44-private-key"></span><figure id="figure-8">
           <div class="lang-json sourcecode" id="appendix-A.4-2.1">
 <pre>
@@ -1842,7 +1842,7 @@ example.com. IN DNSKEY 256 3 18 (
         <h3 id="name-ed25519-with-escaped-owner-">
 <a href="#appendix-A.5" class="section-number selfRef">A.5. </a><a href="#name-ed25519-with-escaped-owner-" class="section-name selfRef">ED25519 with Escaped Owner Name</a>
         </h3>
-<p id="appendix-A.5-1">The following private key uses ED25519 (algorithm 15), with owner name "b\000rken.example.com." and key tag 17078:<a href="#appendix-A.5-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.5-1">The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with owner name "b\000rken.example.com." and key tag 17078:<a href="#appendix-A.5-1" class="pilcrow">¶</a></p>
 <span id="name-ed25519-with-escaped-owner-n"></span><figure id="figure-10">
           <div class="lang-json sourcecode" id="appendix-A.5-2.1">
 <pre>

@@ -79,9 +79,9 @@ Table of Contents
      6.1.  Normative References
      6.2.  Informative References
    Appendix A.  Example Keys
-     A.1.  RSASHA256
-     A.2.  ECDSAP256SHA256
-     A.3.  ED25519
+     A.1.  RSA/SHA-256
+     A.2.  ECDSA Curve P-256 with SHA-256
+     A.3.  Ed25519
      A.4.  ML-DSA-44
      A.5.  ED25519 with Escaped Owner Name
    Acknowledgements
@@ -449,10 +449,10 @@ Appendix A.  Example Keys
    is written "\000", and because the backslash is escaped again in
    JSON, it appears as "b\\000rken" in the serialized JWK.
 
-A.1.  RSASHA256
+A.1.  RSA/SHA-256
 
-   The following private key uses RSASHA256 (algorithm 8), with owner
-   name "example.com." and key tag 49458:
+   The following private key uses RSA/SHA-256 (algorithm 8, mnemonic
+   RSASHA256), with owner name "example.com." and key tag 49458:
 
    =============== NOTE: '\' line wrapping per RFC 8792 ================
 
@@ -496,7 +496,7 @@ A.1.  RSASHA256
      }
    }
 
-                      Figure 2: RSASHA256 Private Key
+                     Figure 2: RSA/SHA-256 Private Key
 
    The corresponding DNSKEY resource record is:
 
@@ -509,12 +509,13 @@ A.1.  RSASHA256
        h9rUOOSastJZnRd3SJkFIqV7MHOdUTNPXBmXvIt5x9hqozPtRs3xbQHW
        dzOaZWwn53c= )
 
-                 Figure 3: RSASHA256 DNSKEY Resource Record
+                Figure 3: RSA/SHA-256 DNSKEY Resource Record
 
-A.2.  ECDSAP256SHA256
+A.2.  ECDSA Curve P-256 with SHA-256
 
-   The following private key uses ECDSAP256SHA256 (algorithm 13), with
-   owner name "example.com." and key tag 9115:
+   The following private key uses ECDSA Curve P-256 with SHA-256
+   (algorithm 13, mnemonic ECDSAP256SHA256), with owner name
+   "example.com." and key tag 9115:
 
    {
      "kid": "ni1azkx1Qe3zOuUw1eRd3oNN_91av68ll49pGTLF_BM",
@@ -532,7 +533,7 @@ A.2.  ECDSAP256SHA256
      }
    }
 
-                   Figure 4: ECDSAP256SHA256 Private Key
+            Figure 4: ECDSA Curve P-256 with SHA-256 Private Key
 
    The corresponding DNSKEY resource record is:
 
@@ -540,12 +541,12 @@ A.2.  ECDSAP256SHA256
        9cqheie08FXlvnU17YJJm1FMUXD4rwi7+4atSdZ3og89HrrGRArhgq6Z
        p8Ffi1hXg3TTxF9kdBl0zGz/tOgrkA== )
 
-              Figure 5: ECDSAP256SHA256 DNSKEY Resource Record
+      Figure 5: ECDSA Curve P-256 with SHA-256 DNSKEY Resource Record
 
-A.3.  ED25519
+A.3.  Ed25519
 
-   The following private key uses ED25519 (algorithm 15), with owner
-   name "example.com." and key tag 63713:
+   The following private key uses Ed25519 (algorithm 15, mnemonic
+   ED25519), with owner name "example.com." and key tag 63713:
 
    {
      "kid": "sddEIwsSByQMb2_YrSxRWGFZoIZSxVP9SWB7_IZ4X5Q",
@@ -562,19 +563,19 @@ A.3.  ED25519
      }
    }
 
-                       Figure 6: ED25519 Private Key
+                       Figure 6: Ed25519 Private Key
 
    The corresponding DNSKEY resource record is:
 
    example.com. IN DNSKEY 256 3 15 (
        xX2gT6qJ76coFM3/pAUBxfBZYGnfSZqbNvbZFI428Ao= )
 
-                  Figure 7: ED25519 DNSKEY Resource Record
+                  Figure 7: Ed25519 DNSKEY Resource Record
 
 A.4.  ML-DSA-44
 
-   The following private key uses ML-DSA-44 (algorithm 18), with owner
-   name "example.com." and key tag 59828:
+   The following private key uses ML-DSA-44 (algorithm 18, mnemonic
+   MLDSA44), with owner name "example.com." and key tag 59828:
 
    =============== NOTE: '\' line wrapping per RFC 8792 ================
 
@@ -660,8 +661,8 @@ A.4.  ML-DSA-44
 
 A.5.  ED25519 with Escaped Owner Name
 
-   The following private key uses ED25519 (algorithm 15), with owner
-   name "b\000rken.example.com." and key tag 17078:
+   The following private key uses Ed25519 (algorithm 15, mnemonic
+   ED25519), with owner name "b\000rken.example.com." and key tag 17078:
 
    {
      "kid": "uJYXQ0ZhGzTiAt0jgXgPDWKExUB3cls1NXInBRsqYU0",
