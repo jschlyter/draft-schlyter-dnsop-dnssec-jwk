@@ -9,7 +9,7 @@ Expires: 15 May 2027
 
 
                      JSON Web Key (JWK) for DNSSEC
-                    draft-schlyter-dnssec-jwk-latest
+                    draft-schlyter-dnsop-dnssec-jwk-latest
 
 Abstract
 
@@ -27,7 +27,7 @@ Discussion Venues
    This note is to be removed before publishing as an RFC.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/jschlyter/draft-schlyter-dnssec-jwk.
+   https://github.com/jschlyter/draft-schlyter-dnsop-dnssec-jwk.
 
 Status of This Memo
 
