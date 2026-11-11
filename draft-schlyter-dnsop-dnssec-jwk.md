@@ -481,5 +481,4 @@ b\000rken.example.com. IN DNSKEY 256 3 15 (
 # Acknowledgements
 {:numbered="false"}
 
-TBD.
-
+The author thanks Paul Hoffman (ICANN) and Johan Stenstam (Swedish Internet Foundation) for valuable insights.
