@@ -78,6 +78,9 @@ Producer:
 Consumer:
 : An entity that parses a DNSSEC JWK, for example a signer importing a key.
 
+JSON Integer:
+: A JSON number that is represented as an integer.
+
 # DNSSEC Keys as JSON Web Key
 
 A DNSSEC JWK is a JWK as defined in {{RFC7517}}, consisting of:
