@@ -112,14 +112,14 @@ The "dnskey" parameter is a JSON object holding the fields of the DNSKEY resourc
 name:
 : The owner name of the DNSKEY resource record, as a JSON string. The name MUST be fully qualified (i.e., end with a "."), and MUST be in DNS presentation format as specified in {{Section 5.1 of RFC1035}}, with octets that are not printable ASCII, as well as ".", "\\", and other special characters within a label, represented using the "\\DDD" escapes. Note that, in JSON, the backslash itself is escaped, so the label "b\\000rken" appears as "b\\\\000rken" in the serialized JWK.
 
-algorithm:
-: The DNSSEC algorithm number ({{Section 2.1.3 of RFC4034}}), as a JSON integer.
+flags:
+: The value of the Flags field ({{Section 2.1.1 of RFC4034}}), as a JSON integer in the range 0 to 65535.
 
 protocol:
 : The value of the Protocol field ({{Section 2.1.2 of RFC4034}}), as a JSON integer. This MUST be 3.
 
-flags:
-: The value of the Flags field ({{Section 2.1.1 of RFC4034}}), as a JSON integer in the range 0 to 65535.
+algorithm:
+: The DNSSEC algorithm number ({{Section 2.1.3 of RFC4034}}), as a JSON integer.
 
 keytag:
 : OPTIONAL. The key tag of the DNSKEY resource record, as computed per {{Appendix B of RFC4034}}, as a JSON integer.
@@ -172,9 +172,9 @@ The following public key is derived from the ECDSA Curve P-256 with SHA-256 priv
   "y": "PR66xkQK4YKumafBX4tYV4N008RfZHQZdMxs_7ToK5A",
   "dnskey": {
     "name": "example.com.",
-    "algorithm": 13,
-    "protocol": 3,
     "flags": 256,
+    "protocol": 3,
+    "algorithm": 13,
     "keytag": 9115
   }
 }
@@ -264,9 +264,9 @@ dRpMqYTKKgFksBsQRb2hNXkUxrHrNx5FzsUpzDk7F4RqfXjS-lT4ASO1BTeDdr_FVoLM\
 8UnWHlFxmC5ZkUiL0W31i4TA9PMwGmjOaYCW213C6Gm0",
   "dnskey": {
     "name": "example.com.",
-    "algorithm": 8,
-    "protocol": 3,
     "flags": 256,
+    "protocol": 3,
+    "algorithm": 8,
     "keytag": 49458
   }
 }
@@ -301,9 +301,9 @@ The following private key uses ECDSA Curve P-256 with SHA-256 (algorithm 13, mne
   "d": "ZaTVn0mC1OgwzCvuQ1V3qf6z-6mMjDStD2QzzUQoHxA",
   "dnskey": {
     "name": "example.com.",
-    "algorithm": 13,
-    "protocol": 3,
     "flags": 256,
+    "protocol": 3,
+    "algorithm": 13,
     "keytag": 9115
   }
 }
@@ -332,9 +332,9 @@ The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with ow
   "d": "Dz9KOncZ00D1WiPEJR_Ec_WXR7YuCbdhUO_H9AERYvw",
   "dnskey": {
     "name": "example.com.",
-    "algorithm": 15,
-    "protocol": 3,
     "flags": 256,
+    "protocol": 3,
+    "algorithm": 15,
     "keytag": 63713
   }
 }
@@ -389,9 +389,9 @@ jzFbpZJejt76Z5NpoiAnZhUfFqll-fgeznbMBwtVhp5NuXhM8FyDCzJCyDEg",
   "priv": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
   "dnskey": {
     "name": "example.com.",
-    "algorithm": 18,
-    "protocol": 3,
     "flags": 256,
+    "protocol": 3,
+    "algorithm": 18,
     "keytag": 59828
   }
 }
@@ -450,9 +450,9 @@ The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with ow
   "d": "NQ4G7dnYiYJMO2UYGqG82Rn2zsX24P6lfiteOBR78PA",
   "dnskey": {
     "name": "b\\000rken.example.com.",
-    "algorithm": 15,
-    "protocol": 3,
     "flags": 256,
+    "protocol": 3,
+    "algorithm": 15,
     "keytag": 17078
   }
 }
