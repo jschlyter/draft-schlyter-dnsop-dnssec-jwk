@@ -4,8 +4,8 @@
 
 Network Working Group                                        J. Schlyter
 Internet-Draft                                                  Kirei AB
-Intended status: Standards Track                        10 November 2026
-Expires: 14 May 2027
+Intended status: Standards Track                        11 November 2026
+Expires: 15 May 2027
 
 
                      JSON Web Key (JWK) for DNSSEC
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 May 2027.
+   This Internet-Draft will expire on 15 May 2027.
 
 Copyright Notice
 
@@ -211,14 +211,14 @@ Table of Contents
       itself is escaped, so the label "b\000rken" appears as
       "b\\000rken" in the serialized JWK.
 
-   algorithm:  The DNSSEC algorithm number (Section 2.1.3 of [RFC4034]),
-      as a JSON integer.
+   flags:  The value of the Flags field (Section 2.1.1 of [RFC4034]), as
+      a JSON integer in the range 0 to 65535.
 
    protocol:  The value of the Protocol field (Section 2.1.2 of
       [RFC4034]), as a JSON integer.  This MUST be 3.
 
-   flags:  The value of the Flags field (Section 2.1.1 of [RFC4034]), as
-      a JSON integer in the range 0 to 65535.
+   algorithm:  The DNSSEC algorithm number (Section 2.1.3 of [RFC4034]),
+      as a JSON integer.
 
    keytag:  OPTIONAL.  The key tag of the DNSKEY resource record, as
       computed per Appendix B of [RFC4034], as a JSON integer.
@@ -301,9 +301,9 @@ Table of Contents
      "y": "PR66xkQK4YKumafBX4tYV4N008RfZHQZdMxs_7ToK5A",
      "dnskey": {
        "name": "example.com.",
-       "algorithm": 13,
-       "protocol": 3,
        "flags": 256,
+       "protocol": 3,
+       "algorithm": 13,
        "keytag": 9115
      }
    }
@@ -490,9 +490,9 @@ A.1.  RSA/SHA-256
    8UnWHlFxmC5ZkUiL0W31i4TA9PMwGmjOaYCW213C6Gm0",
      "dnskey": {
        "name": "example.com.",
-       "algorithm": 8,
-       "protocol": 3,
        "flags": 256,
+       "protocol": 3,
+       "algorithm": 8,
        "keytag": 49458
      }
    }
@@ -527,9 +527,9 @@ A.2.  ECDSA Curve P-256 with SHA-256
      "d": "ZaTVn0mC1OgwzCvuQ1V3qf6z-6mMjDStD2QzzUQoHxA",
      "dnskey": {
        "name": "example.com.",
-       "algorithm": 13,
-       "protocol": 3,
        "flags": 256,
+       "protocol": 3,
+       "algorithm": 13,
        "keytag": 9115
      }
    }
@@ -557,9 +557,9 @@ A.3.  Ed25519
      "d": "Dz9KOncZ00D1WiPEJR_Ec_WXR7YuCbdhUO_H9AERYvw",
      "dnskey": {
        "name": "example.com.",
-       "algorithm": 15,
-       "protocol": 3,
        "flags": 256,
+       "protocol": 3,
+       "algorithm": 15,
        "keytag": 63713
      }
    }
@@ -613,9 +613,9 @@ A.4.  ML-DSA-44
      "priv": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
      "dnskey": {
        "name": "example.com.",
-       "algorithm": 18,
-       "protocol": 3,
        "flags": 256,
+       "protocol": 3,
+       "algorithm": 18,
        "keytag": 59828
      }
    }
@@ -673,9 +673,9 @@ A.5.  ED25519 with Escaped Owner Name
      "d": "NQ4G7dnYiYJMO2UYGqG82Rn2zsX24P6lfiteOBR78PA",
      "dnskey": {
        "name": "b\\000rken.example.com.",
-       "algorithm": 15,
-       "protocol": 3,
        "flags": 256,
+       "protocol": 3,
+       "algorithm": 15,
        "keytag": 17078
      }
    }
