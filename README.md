@@ -4,16 +4,16 @@
 
 This is the working area for the individual Internet-Draft, "JSON Web Key (JWK) for DNSSEC".
 
-* [Editor's Copy](https://jschlyter.github.io/draft-schlyter-dnssec-jwk/#go.draft-schlyter-dnssec-jwk.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-schlyter-dnssec-jwk)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-schlyter-dnssec-jwk)
-* [Compare Editor's Copy to Individual Draft](https://jschlyter.github.io/draft-schlyter-dnssec-jwk/#go.draft-schlyter-dnssec-jwk.diff)
+* [Editor's Copy](https://jschlyter.github.io/draft-schlyter-dnsop-dnssec-jwk/#go.draft-schlyter-dnsop-dnssec-jwk.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-schlyter-dnsop-dnssec-jwk)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-schlyter-dnsop-dnssec-jwk)
+* [Compare Editor's Copy to Individual Draft](https://jschlyter.github.io/draft-schlyter-dnsop-dnssec-jwk/#go.draft-schlyter-dnsop-dnssec-jwk.diff)
 
 
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/jschlyter/draft-schlyter-dnssec-jwk/blob//CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/jschlyter/draft-schlyter-dnsop-dnssec-jwk/blob//CONTRIBUTING.md).
 
 The contributing file also has tips on how to make contributions, if you
 don't already know how to do that.
