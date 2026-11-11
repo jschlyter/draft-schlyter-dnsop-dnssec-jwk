@@ -102,7 +102,7 @@ Table of Contents
 
    JSON Web Key (JWK) [RFC7517] is a well-established and widely
    implemented JSON [RFC8259] format for representing cryptographic
-   keys, with defined encodings for RSA, elliptic curve, Edwards-curve
+   keys, with defined encodings for RSA, elliptic curve, Edwards curves
    and ML-DSA keys [RFC7518] [RFC8037] [I-D.ietf-cose-dilithium],
    covering the signature schemes used by DNSSEC.  A JWK alone, however,
    does not carry the information needed to construct a DNSKEY resource
