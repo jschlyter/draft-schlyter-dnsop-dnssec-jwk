@@ -97,7 +97,7 @@ DNSSEC algorithms are identified by the numbers registered in the "DNS Security 
 * EdDSA keys use the "OKP" key type, with "crv" identifying the curve {{RFC8037}}.
 * ML-DSA keys use the "AKP" key type, with "alg" identifying the parameter set {{I-D.ietf-cose-dilithium}}.
 
-A DNSSEC algorithm for which no corresponding JWK key type is registered cannot be represented using this specification.
+A DNSSEC algorithm for which no corresponding JWK representation exists cannot be represented using this specification; see {{unsupported-algorithms}}.
 
 The JWK key types do not, in general, identify the DNSSEC algorithm; for example, the same RSA key could be used with algorithm 8 (RSASHA256) or 10 (RSASHA512). The DNSSEC algorithm is therefore always given by the "algorithm" member of the "dnskey" parameter.
 
@@ -140,6 +140,14 @@ which is not unique and is optionally carried in the "dnskey" parameter.
 The "alg" parameter ({{Section 4.4 of RFC7517}}) is OPTIONAL, except where required by the key type. When included, it MUST be consistent with the DNSSEC algorithm.
 
 Other JWK parameters, such as "use" or "key_ops", MAY be included. Consumers MAY ignore them.
+
+## Algorithms Without a JWK Representation {#unsupported-algorithms}
+
+This specification does not define any new JWK key types or key type specific parameters. It can therefore only be used for DNSSEC algorithms whose key material already has a JWK representation, i.e., a key type registered in the "JSON Web Key Types" registry and, where applicable, a curve registered in the "JSON Web Key Elliptic Curve" registry or a parameter set identified by "alg" {{IANA-JOSE}}. Keys for other DNSSEC algorithms cannot be represented using this specification. At the time of writing, this includes, for example, DSA (algorithms 3 and 6), ECC-GOST (algorithm 12), SM2SM3 (algorithm 17) and ECC-GOST12 (algorithm 23).
+
+What is required is a JWK representation of the key material, not a registered JSON Web Signature algorithm matching the DNSSEC algorithm. For example, RSA/SHA-512 (algorithm 10) keys use the "RSA" key type regardless of which "alg" values are registered for use with that key type.
+
+Support for an additional DNSSEC algorithm can be added by registering a JWK representation for its key material, without updating this specification. Documents defining new DNSSEC algorithms are encouraged to specify such a representation, if one does not already exist.
 
 ## Processing Rules
 
