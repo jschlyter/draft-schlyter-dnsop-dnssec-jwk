@@ -445,7 +445,7 @@ example.com. IN DNSKEY 256 3 18 (
 ~~~
 {: title="ML-DSA-44 DNSKEY Resource Record"}
 
-## ED25519 with Escaped Owner Name
+## Ed25519 with Escaped Owner Name
 
 The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with owner name "b\\000rken.example.com." and key tag 17078:
 
@@ -465,7 +465,7 @@ The following private key uses Ed25519 (algorithm 15, mnemonic ED25519), with ow
   }
 }
 ~~~
-{: title="ED25519 with Escaped Owner Name Private Key"}
+{: title="Ed25519 with Escaped Owner Name Private Key"}
 
 The corresponding DNSKEY resource record is:
 
@@ -473,7 +473,7 @@ The corresponding DNSKEY resource record is:
 b\000rken.example.com. IN DNSKEY 256 3 15 (
     w/VxpL9dTguTG/ivgqZFa9lkjiPkR+g15ktPAhuTIt8= )
 ~~~
-{: title="ED25519 with Escaped Owner Name DNSKEY Resource Record"}
+{: title="Ed25519 with Escaped Owner Name DNSKEY Resource Record"}
 
 # Acknowledgements
 {:numbered="false"}
