@@ -9,7 +9,7 @@ Expires: 15 May 2027
 
 
                      JSON Web Key (JWK) for DNSSEC
-                    draft-schlyter-dnsop-dnssec-jwk-latest
+                 draft-schlyter-dnsop-dnssec-jwk-latest
 
 Abstract
 
@@ -720,7 +720,8 @@ A.5.  Ed25519 with Escaped Owner Name
 
 Acknowledgements
 
-   TBD.
+   The author thanks Paul Hoffman (ICANN) and Johan Stenstam (Swedish
+   Internet Foundation) for valuable insights.
 
 Author's Address
 
