@@ -13,7 +13,7 @@ This is the working area for the individual Internet-Draft, "JSON Web Key (JWK) 
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/jschlyter/draft-schlyter-dnsop-dnssec-jwk/blob//CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/jschlyter/draft-schlyter-dnsop-dnssec-jwk/blob/main/CONTRIBUTING.md).
 
 The contributing file also has tips on how to make contributions, if you
 don't already know how to do that.
