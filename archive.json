@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-24T08:36:04.366727+00:00",
+  "timestamp": "2026-11-26T06:59:40.828000+00:00",
   "repo": "jschlyter/draft-schlyter-dnsop-dnssec-jwk",
   "labels": [
     {
@@ -54,6 +54,39 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOVpCsEc8AAAABijuPsA",
+      "title": "Use JWK alg?",
+      "url": "https://github.com/jschlyter/draft-schlyter-dnsop-dnssec-jwk/issues/1",
+      "state": "OPEN",
+      "author": "jschlyter",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Do we want to map the DNSSEC algorithm to JWK `kty` & `alg`? If both are set, should `algorithm` be made optional?",
+      "createdAt": "2026-11-25T21:29:24Z",
+      "updatedAt": "2026-11-25T21:29:24Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 2,
+      "id": "I_kwDOVpCsEc8AAAABijvGgA",
+      "title": "Default values for protocol and flags?",
+      "url": "https://github.com/jschlyter/draft-schlyter-dnsop-dnssec-jwk/issues/2",
+      "state": "OPEN",
+      "author": "jschlyter",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Should there be default values for protocol (3) and flags (256)?",
+      "createdAt": "2026-11-25T21:30:19Z",
+      "updatedAt": "2026-11-25T21:30:19Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": []
 }
